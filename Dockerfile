@@ -1,7 +1,8 @@
 FROM php:8.3-fpm-alpine
 
-RUN apk add --no-cache nginx supervisor bash postgresql-dev \
-    && docker-php-ext-install -j$(nproc) pdo_pgsql pgsql bcmath
+RUN apk add --no-cache nginx supervisor bash postgresql-dev icu-dev libzip-dev libpng-dev libjpeg-turbo-dev freetype-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) pdo_pgsql pgsql bcmath intl zip gd
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 

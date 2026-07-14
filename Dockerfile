@@ -14,7 +14,12 @@ COPY conf/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY scripts/start.sh /start.sh
 
 RUN chmod +x /start.sh \
-    && composer install --no-dev --optimize-autoloader
+    && composer install --no-dev --optimize-autoloader \
+    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+RUN echo "upload_tmp_dir=/tmp" > /usr/local/etc/php/conf.d/tmp.ini \
+    && echo "session.save_path=/tmp" >> /usr/local/etc/php/conf.d/tmp.ini
 
 EXPOSE 80
 

@@ -1,17 +1,23 @@
-FROM richarvey/nginx-php-fpm:3.1.6
+FROM php:8.3-fpm-alpine
 
-COPY . .
+RUN apk add --no-cache nginx supervisor bash \
+    && docker-php-ext-install -j$(nproc) pdo_pgsql pgsql bcmath
 
-ENV SKIP_COMPOSER 1
-ENV WEBROOT /var/www/html/public
-ENV PHP_ERRORS_STDERR 1
-ENV RUN_SCRIPTS 1
-ENV REAL_IP_HEADER 1
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-ENV APP_ENV production
-ENV APP_DEBUG false
-ENV LOG_CHANNEL stderr
+COPY . /var/www/html
+WORKDIR /var/www/html
 
-ENV COMPOSER_ALLOW_SUPERUSER 1
+COPY conf/nginx/nginx-site.conf /etc/nginx/http.d/default.conf
+COPY conf/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY scripts/start.sh /start.sh
+
+RUN chmod +x /start.sh \
+    && composer install --no-dev --optimize-autoloader \
+    && php artisan config:cache \
+    && php artisan route:cache \
+    && php artisan view:cache
+
+EXPOSE 80
 
 CMD ["/start.sh"]

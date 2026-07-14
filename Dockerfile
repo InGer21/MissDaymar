@@ -1,6 +1,6 @@
 FROM php:8.3-fpm-alpine
 
-RUN apk add --no-cache nginx supervisor bash \
+RUN apk add --no-cache nginx supervisor bash postgresql-dev \
     && docker-php-ext-install -j$(nproc) pdo_pgsql pgsql bcmath
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer

@@ -23,6 +23,12 @@ RUN chmod +x /start.sh \
 RUN echo "upload_tmp_dir=/tmp" > /usr/local/etc/php/conf.d/tmp.ini \
     && echo "session.save_path=/tmp" >> /usr/local/etc/php/conf.d/tmp.ini
 
+RUN echo "opcache.enable=1" > /usr/local/etc/php/conf.d/opcache.ini \
+    && echo "opcache.memory_consumption=128" >> /usr/local/etc/php/conf.d/opcache.ini \
+    && echo "opcache.interned_strings_buffer=16" >> /usr/local/etc/php/conf.d/opcache.ini \
+    && echo "opcache.max_accelerated_files=10000" >> /usr/local/etc/php/conf.d/opcache.ini \
+    && echo "opcache.validate_timestamps=0" >> /usr/local/etc/php/conf.d/opcache.ini
+
 EXPOSE 80
 
 CMD ["/start.sh"]

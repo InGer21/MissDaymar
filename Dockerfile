@@ -1,6 +1,6 @@
 FROM php:8.3-fpm-alpine
 
-RUN apk add --no-cache nginx supervisor bash postgresql-dev icu-dev libzip-dev libpng-dev libjpeg-turbo-dev freetype-dev \
+RUN apk add --no-cache nginx supervisor bash nodejs npm postgresql-dev icu-dev libzip-dev libpng-dev libjpeg-turbo-dev freetype-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) pdo_pgsql pgsql bcmath intl zip gd
 
@@ -15,8 +15,10 @@ COPY scripts/start.sh /start.sh
 
 RUN chmod +x /start.sh \
     && composer install --no-dev --optimize-autoloader \
-    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+    && npm install \
+    && npm run build \
+    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/public/build \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/public/build
 
 RUN echo "upload_tmp_dir=/tmp" > /usr/local/etc/php/conf.d/tmp.ini \
     && echo "session.save_path=/tmp" >> /usr/local/etc/php/conf.d/tmp.ini

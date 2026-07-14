@@ -14,10 +14,7 @@ COPY conf/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY scripts/start.sh /start.sh
 
 RUN chmod +x /start.sh \
-    && composer install --no-dev --optimize-autoloader \
-    && php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
+    && composer install --no-dev --optimize-autoloader
 
 EXPOSE 80
 

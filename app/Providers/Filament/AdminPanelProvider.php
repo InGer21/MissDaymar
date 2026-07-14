@@ -29,6 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->login()
             ->passwordReset()
+            ->darkMode(false)
             ->colors([
                 'primary' => Color::hex('#004B9B'),
                 'warning' => Color::hex('#FFF200'),

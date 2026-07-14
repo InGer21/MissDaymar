@@ -12,6 +12,7 @@ use App\Observers\InventoryMovementObserver;
 use App\Observers\InvoiceObserver;
 use App\Observers\SalesOrderItemObserver;
 use App\Observers\SalesOrderObserver;
+use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,8 +22,12 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 
-    public function boot(): void
+    public function boot(UrlGenerator $url): void
     {
+        if (app()->environment('production')) {
+            $url->forceScheme('https');
+        }
+
         InventoryMovement::observe(InventoryMovementObserver::class);
         SalesOrderItem::observe(SalesOrderItemObserver::class);
         SalesOrder::observe(SalesOrderObserver::class);

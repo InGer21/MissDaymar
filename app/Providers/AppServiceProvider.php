@@ -12,6 +12,7 @@ use App\Observers\InventoryMovementObserver;
 use App\Observers\InvoiceObserver;
 use App\Observers\SalesOrderItemObserver;
 use App\Observers\SalesOrderObserver;
+use Illuminate\Http\Request;
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\ServiceProvider;
 
@@ -26,6 +27,15 @@ class AppServiceProvider extends ServiceProvider
     {
         if (app()->environment('production')) {
             $url->forceScheme('https');
+
+            $this->app->make(Request::class)->setTrustedProxies(
+                ['*'],
+                Request::HEADER_X_FORWARDED_FOR |
+                Request::HEADER_X_FORWARDED_HOST |
+                Request::HEADER_X_FORWARDED_PORT |
+                Request::HEADER_X_FORWARDED_PROTO |
+                Request::HEADER_X_FORWARDED_AWS_ELB
+            );
         }
 
         InventoryMovement::observe(InventoryMovementObserver::class);

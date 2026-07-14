@@ -9,7 +9,10 @@ class SalesOrderItemObserver
     public function saving(SalesOrderItem $item): void
     {
         if ($item->presentation_id && ! $item->product_id) {
-            $item->product_id = $item->presentation->product_id;
+            $presentation = $item->presentation;
+            if ($presentation) {
+                $item->product_id = $presentation->product_id;
+            }
         }
 
         if ($item->quantity && $item->unit_price_usd) {
@@ -30,6 +33,11 @@ class SalesOrderItemObserver
     private static function recalculateOrderTotal(SalesOrderItem $item): void
     {
         $order = $item->salesOrder;
+
+        if (! $order) {
+            return;
+        }
+
         $order->total_usd = $order->items()->sum('subtotal_usd');
         $order->saveQuietly();
     }

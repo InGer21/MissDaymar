@@ -36,7 +36,7 @@ class SalesOrderForm
                         Select::make('presentation_id')
                             ->label('Producto')
                             ->options(fn () => ProductPresentation::with('product')
-                                ->get()
+                                ->limit(200)->get()
                                 ->mapWithKeys(fn ($p) => [
                                     $p->id => "{$p->product->name} | {$p->presentation_type} {$p->format}",
                                 ])

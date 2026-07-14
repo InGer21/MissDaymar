@@ -10,6 +10,10 @@ class InventoryMovementObserver
     {
         $presentation = $movement->presentation;
 
+        if (! $presentation) {
+            return;
+        }
+
         $delta = match ($movement->type) {
             'entry' => $movement->quantity,
             'exit' => -$movement->quantity,
@@ -29,6 +33,10 @@ class InventoryMovementObserver
     {
         $original = $movement->getOriginal();
         $presentation = $movement->presentation;
+
+        if (! $presentation) {
+            return;
+        }
 
         $oldDelta = match ($original['type']) {
             'entry' => $original['quantity'],

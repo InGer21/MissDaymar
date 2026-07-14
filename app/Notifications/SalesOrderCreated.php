@@ -4,10 +4,11 @@ namespace App\Notifications;
 
 use App\Models\SalesOrder;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SalesOrderCreated extends Notification
+class SalesOrderCreated extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -26,7 +27,9 @@ class SalesOrderCreated extends Notification
         $url = url("/admin/sales-orders/{$this->order->id}");
 
         $lines = collect($this->order->items)
-            ->map(fn ($item) => "  • {$item->quantity} × {$item->presentation->product->name} - {$item->presentation->presentation_type} {$item->presentation->format}");
+            ->map(fn ($item) => $item->presentation?->product
+                ? "  • {$item->quantity} × {$item->presentation->product->name} - {$item->presentation->presentation_type} {$item->presentation->format}"
+                : "  • {$item->quantity} × (producto eliminado)");
         $itemsList = $lines->implode("\n");
 
         return (new MailMessage)

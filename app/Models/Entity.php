@@ -5,7 +5,6 @@ namespace App\Models;
 use Database\Factories\EntityFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -18,7 +17,6 @@ class Entity extends Model
         'profit_code',
         'profit_vendor',
         'profit_zone',
-        'user_id',
         'type',
         'name',
         'rif',
@@ -30,11 +28,6 @@ class Entity extends Model
         'email',
         'is_active',
     ];
-
-    public function vendor(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
 
     public function salesOrders(): HasMany
     {

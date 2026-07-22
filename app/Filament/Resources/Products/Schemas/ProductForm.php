@@ -35,17 +35,6 @@ class ProductForm
                 TextInput::make('line_2')
                     ->label('Línea 2')
                     ->maxLength(50),
-                TextInput::make('profit_code')
-                    ->label('Código Profit')
-                    ->maxLength(30),
-                TextInput::make('profit_line')
-                    ->label('Línea Profit')
-                    ->maxLength(50),
-                TextInput::make('profit_subl')
-                    ->label('Sublínea Profit')
-                    ->maxLength(50),
-                Toggle::make('is_service')
-                    ->label('¿Es Servicio?'),
             ]);
     }
 }

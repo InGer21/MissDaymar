@@ -36,9 +36,6 @@ class SalesOrderInfolist
                 TextEntry::make('total_usd')
                     ->label('Total ($)')
                     ->numeric(),
-                TextEntry::make('profit_doc_num')
-                    ->label('N° Doc. Profit')
-                    ->placeholder('-'),
                 TextEntry::make('deleted_at')
                     ->label('Eliminada')
                     ->dateTime()

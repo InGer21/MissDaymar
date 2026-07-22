@@ -44,20 +44,17 @@ class ItemsRelationManager extends RelationManager
                 TextInput::make('quantity')
                     ->label('Cantidad')
                     ->required()
-                    ->numeric()
-                    ->minValue(0.001),
+                    ->numeric(),
                 TextInput::make('unit_price_usd')
                     ->label('Precio Unitario ($)')
                     ->required()
                     ->numeric()
-                    ->minValue(0)
                     ->prefix('$'),
                 TextInput::make('subtotal_usd')
                     ->label('Subtotal ($)')
                     ->required()
                     ->numeric()
-                    ->prefix('$')
-                    ->disabled(),
+                    ->prefix('$'),
             ]);
     }
 
@@ -103,7 +100,6 @@ class ItemsRelationManager extends RelationManager
                 ]),
             ])
             ->modifyQueryUsing(fn (Builder $query) => $query
-                ->with('presentation.product')
                 ->withoutGlobalScopes([
                     SoftDeletingScope::class,
                 ]));

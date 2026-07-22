@@ -55,22 +55,6 @@ class ProductPresentationForm
                     ->helperText('Actualizado automáticamente por movimientos de inventario'),
                 Toggle::make('is_active')
                     ->label('¿Activo?'),
-                TextInput::make('price_usd')
-                    ->label('Precio (USD)')
-                    ->numeric()
-                    ->prefix('$')
-                    ->disabled()
-                    ->helperText('Gestionar precios desde el producto → Presentaciones')
-                    ->afterStateHydrated(fn ($record, $set) => $set('price_usd', $record?->prices?->first()?->price_usd))
-                    ->dehydrated(false),
-                TextInput::make('profit_unit_code')
-                    ->label('Cód. Unidad Profit')
-                    ->maxLength(20),
-                TextInput::make('profit_equivalence')
-                    ->label('Equivalencia Profit')
-                    ->numeric(),
-                Toggle::make('is_main_unit')
-                    ->label('¿Unidad Principal?'),
             ]);
     }
 }

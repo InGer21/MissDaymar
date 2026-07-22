@@ -21,7 +21,6 @@ class User extends Authenticatable
         'role',
         'profit_code',
         'is_salesperson',
-        'is_active',
     ];
 
     protected $hidden = [
@@ -34,14 +33,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'is_salesperson' => 'boolean',
-            'is_active' => 'boolean',
         ];
-    }
-
-    public function assignedEntities(): HasMany
-    {
-        return $this->hasMany(Entity::class, 'user_id');
     }
 
     public function salesOrders(): HasMany

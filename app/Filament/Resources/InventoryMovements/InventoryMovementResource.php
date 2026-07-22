@@ -16,7 +16,6 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
 class InventoryMovementResource extends Resource
@@ -43,12 +42,6 @@ class InventoryMovementResource extends Resource
     protected static ?string $recordTitleAttribute = 'id';
 
     protected static ?int $navigationSort = 3;
-
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->with('presentation.product');
-    }
 
     public static function form(Schema $schema): Schema
     {

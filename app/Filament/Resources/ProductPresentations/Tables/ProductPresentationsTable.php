@@ -36,13 +36,6 @@ class ProductPresentationsTable
                 IconColumn::make('is_active')
                     ->label('¿Activo?')
                     ->boolean(),
-                TextColumn::make('profit_unit_code')
-                    ->label('Cód. Profit')
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('profit_equivalence')
-                    ->label('Equiv. Profit')
-                    ->numeric()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 TrashedFilter::make(),

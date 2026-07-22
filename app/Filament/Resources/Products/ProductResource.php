@@ -78,17 +78,11 @@ class ProductResource extends Resource
         ];
     }
 
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ])
-            ->with('category');
-    }
-
     public static function getRecordRouteBindingEloquentQuery(): Builder
     {
-        return static::getEloquentQuery();
+        return parent::getRecordRouteBindingEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 }

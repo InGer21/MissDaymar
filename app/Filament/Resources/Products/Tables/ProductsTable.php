@@ -50,6 +50,13 @@ class ProductsTable
                 IconColumn::make('is_pure')
                     ->label('¿Puro?')
                     ->boolean(),
+                TextColumn::make('profit_code')
+                    ->label('Cód. Profit')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                IconColumn::make('is_service')
+                    ->label('¿Servicio?')
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 SelectFilter::make('type')

@@ -30,7 +30,8 @@ class InventoryMovementForm
                 TextInput::make('quantity')
                     ->label('Cantidad')
                     ->required()
-                    ->numeric(),
+                    ->numeric()
+                    ->minValue(0.001),
                 TextInput::make('referenceable_type')
                     ->label('Tipo de Referencia')
                     ->hidden()

@@ -42,6 +42,10 @@ class UsersTable
                 IconColumn::make('is_active')
                     ->label('¿Activo?')
                     ->boolean(),
+                TextColumn::make('profit_code')
+                    ->label('Cód. Profit')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->label('Creado')
                     ->dateTime()

@@ -47,6 +47,15 @@ class EntitiesTable
                 TextColumn::make('vendor.name')
                     ->label('Vendedor')
                     ->visible(fn () => auth()->user()?->role === 'admin'),
+                TextColumn::make('profit_code')
+                    ->label('Cód. Profit')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('phone')
+                    ->label('Teléfono')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('email')
+                    ->label('Email')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('is_active')
                     ->label('¿Activo?')
                     ->boolean(),

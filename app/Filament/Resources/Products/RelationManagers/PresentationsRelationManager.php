@@ -134,6 +134,7 @@ class PresentationsRelationManager extends RelationManager
                 ]),
             ])
             ->modifyQueryUsing(fn (Builder $query) => $query
+                ->with('prices')
                 ->withoutGlobalScopes([
                     SoftDeletingScope::class,
                 ]));

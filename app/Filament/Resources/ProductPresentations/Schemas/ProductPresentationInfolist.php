@@ -28,6 +28,16 @@ class ProductPresentationInfolist
                 IconEntry::make('is_active')
                     ->label('¿Activa?')
                     ->boolean(),
+                TextEntry::make('profit_unit_code')
+                    ->label('Cód. Unidad Profit')
+                    ->placeholder('-'),
+                TextEntry::make('profit_equivalence')
+                    ->label('Equivalencia Profit')
+                    ->numeric()
+                    ->placeholder('-'),
+                IconEntry::make('is_main_unit')
+                    ->label('¿Unidad Principal?')
+                    ->boolean(),
                 TextEntry::make('deleted_at')
                     ->label('Eliminada')
                     ->dateTime()

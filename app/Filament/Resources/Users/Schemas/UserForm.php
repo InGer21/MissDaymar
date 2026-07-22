@@ -46,6 +46,9 @@ class UserForm
                 Toggle::make('is_active')
                     ->label('¿Activo?')
                     ->default(true),
+                TextInput::make('profit_code')
+                    ->label('Código Profit')
+                    ->maxLength(20),
             ]);
     }
 }

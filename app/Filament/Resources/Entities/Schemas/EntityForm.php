@@ -61,6 +61,18 @@ class EntityForm
                     ->searchable()
                     ->preload()
                     ->visible(fn () => auth()->user()?->role === 'admin'),
+                TextInput::make('profit_code')
+                    ->label('Código Profit')
+                    ->maxLength(20)
+                    ->visible(fn () => auth()->user()?->role === 'admin'),
+                TextInput::make('profit_vendor')
+                    ->label('Vendor Profit')
+                    ->maxLength(20)
+                    ->visible(fn () => auth()->user()?->role === 'admin'),
+                TextInput::make('profit_zone')
+                    ->label('Zona Profit')
+                    ->maxLength(20)
+                    ->visible(fn () => auth()->user()?->role === 'admin'),
             ]);
     }
 }

@@ -37,6 +37,18 @@ class ProductInfolist
                 IconEntry::make('is_pure')
                     ->label('¿Puro?')
                     ->boolean(),
+                TextEntry::make('profit_code')
+                    ->label('Código Profit')
+                    ->placeholder('-'),
+                TextEntry::make('profit_line')
+                    ->label('Línea Profit')
+                    ->placeholder('-'),
+                TextEntry::make('profit_subl')
+                    ->label('Sublínea Profit')
+                    ->placeholder('-'),
+                IconEntry::make('is_service')
+                    ->label('¿Servicio?')
+                    ->boolean(),
                 TextEntry::make('deleted_at')
                     ->label('Eliminada')
                     ->dateTime()

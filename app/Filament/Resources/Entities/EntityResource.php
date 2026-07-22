@@ -82,7 +82,8 @@ class EntityResource extends Resource
         $query = parent::getEloquentQuery()
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
-            ]);
+            ])
+            ->with('vendor');
 
         $user = auth()->user();
 

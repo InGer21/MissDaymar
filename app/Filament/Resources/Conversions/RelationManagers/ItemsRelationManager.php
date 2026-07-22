@@ -53,7 +53,8 @@ class ItemsRelationManager extends RelationManager
                 TextInput::make('quantity')
                     ->label('Cantidad')
                     ->required()
-                    ->numeric(),
+                    ->numeric()
+                    ->minValue(0.001),
             ]);
     }
 
@@ -106,6 +107,7 @@ class ItemsRelationManager extends RelationManager
                 ]),
             ])
             ->modifyQueryUsing(fn (Builder $query) => $query
+                ->with('presentation.product')
                 ->withoutGlobalScopes([
                     SoftDeletingScope::class,
                 ]));

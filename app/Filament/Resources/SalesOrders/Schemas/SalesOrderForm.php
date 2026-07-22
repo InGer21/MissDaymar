@@ -35,15 +35,21 @@ class SalesOrderForm
                     ->schema([
                         Select::make('presentation_id')
                             ->label('Producto')
-                            ->options(fn () => ProductPresentation::with('product')
-                                ->limit(200)->get()
+                            ->searchable()
+                            ->required()
+                            ->live()
+                            ->getSearchResultsUsing(fn (string $search): array => ProductPresentation::with('product')
+                                ->whereHas('product', fn ($q) => $q->where('name', 'ilike', "%{$search}%"))
+                                ->orWhere('format', 'ilike', "%{$search}%")
+                                ->limit(50)
+                                ->get()
                                 ->mapWithKeys(fn ($p) => [
                                     $p->id => "{$p->product->name} | {$p->presentation_type} {$p->format}",
                                 ])
                                 ->toArray())
-                            ->searchable()
-                            ->required()
-                            ->live()
+                            ->getOptionLabelUsing(fn ($value): ?string => ($p = ProductPresentation::with('product')->find($value))
+                                ? "{$p->product->name} | {$p->presentation_type} {$p->format}"
+                                : null)
                             ->afterStateUpdated(function ($state, $set) {
                                 $pres = ProductPresentation::with('prices')->find($state);
                                 if (! $pres) {
@@ -51,7 +57,7 @@ class SalesOrderForm
                                 }
                                 $price = $pres->prices->first();
                                 if ($price) {
-                                    $set('unit_price_usd', $price->unit_price_usd);
+                                    $set('unit_price_usd', $price->price_usd);
                                 }
                             }),
                         TextInput::make('quantity')

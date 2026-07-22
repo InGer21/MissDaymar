@@ -41,7 +41,7 @@ trait HasRoleAccess
             return true;
         }
 
-        $allowed = static::getRoleAccess()[$action] ?? static::getRoleAccess()['view'] ?? [];
+        $allowed = static::getRoleAccess()[$action] ?? [];
 
         return in_array($user->role, $allowed);
     }

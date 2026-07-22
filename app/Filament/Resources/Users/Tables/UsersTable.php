@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Users\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -35,6 +36,9 @@ class UsersTable
                         'vendedor' => 'Vendedor',
                         'facturacion' => 'Facturación',
                     }),
+                IconColumn::make('is_salesperson')
+                    ->label('¿Vendedor?')
+                    ->boolean(),
                 TextColumn::make('created_at')
                     ->label('Creado')
                     ->dateTime()

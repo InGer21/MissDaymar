@@ -33,9 +33,11 @@ class InventoryMovementForm
                     ->numeric(),
                 TextInput::make('referenceable_type')
                     ->label('Tipo de Referencia')
+                    ->hidden()
                     ->maxLength(255),
                 TextInput::make('referenceable_id')
                     ->label('ID de Referencia')
+                    ->hidden()
                     ->numeric(),
                 Textarea::make('notes')
                     ->label('Notas')

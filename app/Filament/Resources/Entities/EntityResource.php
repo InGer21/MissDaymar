@@ -39,9 +39,9 @@ class EntityResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Ventas';
 
-    protected static ?string $modelLabel = 'Cliente';
+    protected static ?string $modelLabel = 'Entidad';
 
-    protected static ?string $pluralModelLabel = 'Clientes';
+    protected static ?string $pluralModelLabel = 'Entidades';
 
     protected static ?string $recordTitleAttribute = 'name';
 

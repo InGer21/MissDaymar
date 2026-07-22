@@ -21,7 +21,6 @@ class SalesOrder extends Model
         'user_id',
         'status',
         'notes',
-        'total_usd',
     ];
 
     protected $attributes = [

@@ -9,6 +9,7 @@ use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
@@ -54,6 +55,14 @@ class SalesOrdersTable
                     ->sortable(),
             ])
             ->filters([
+                SelectFilter::make('status')
+                    ->options([
+                        'pending' => 'Pendiente',
+                        'under_review' => 'En Revisión',
+                        'invoicing' => 'En Facturación',
+                        'invoiced' => 'Facturado',
+                        'cancelled' => 'Cancelado',
+                    ]),
                 TrashedFilter::make(),
             ])
             ->recordActions([

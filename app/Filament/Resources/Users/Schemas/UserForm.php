@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Users\Schemas;
 
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 
 class UserForm
@@ -27,8 +28,9 @@ class UserForm
                     ->label('Contraseña')
                     ->password()
                     ->required(fn (string $operation): bool => $operation === 'create')
-                    ->visible(fn (string $operation): bool => $operation === 'create')
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->dehydrated(fn ($state) => filled($state))
+                    ->helperText(fn (string $operation): ?string => $operation === 'edit' ? 'Dejar en blanco para mantener la contraseña actual' : null),
                 Select::make('role')
                     ->label('Rol')
                     ->required()
@@ -39,6 +41,8 @@ class UserForm
                         'facturacion' => 'Facturación',
                     ])
                     ->default('vendedor'),
+                Toggle::make('is_salesperson')
+                    ->label('¿Es vendedor?'),
             ]);
     }
 }

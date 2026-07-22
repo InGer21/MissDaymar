@@ -21,7 +21,6 @@ class ProductPresentation extends Model
         'profit_equivalence',
         'format',
         'unit',
-        'current_stock',
         'is_active',
         'is_main_unit',
     ];

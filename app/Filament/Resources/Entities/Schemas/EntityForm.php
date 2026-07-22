@@ -48,7 +48,7 @@ class EntityForm
                 TextInput::make('phone')
                     ->label('Teléfono')
                     ->tel()
-                    ->maxLength(20),
+                    ->maxLength(100),
                 TextInput::make('email')
                     ->label('Correo Electrónico')
                     ->email()

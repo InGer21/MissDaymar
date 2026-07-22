@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('conversion_id')->constrained()->cascadeOnDelete();
             $table->foreignId('presentation_id')->constrained('product_presentations')->cascadeOnDelete();
-            $table->string('type', 20); // input, sobrante, merma
+            $table->string('type', 20); // input, output, sobrante, merma
             $table->decimal('quantity', 10, 2);
             $table->timestamps();
         });

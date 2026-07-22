@@ -50,7 +50,9 @@ class ProductPresentationForm
                     ->label('Stock Actual')
                     ->required()
                     ->numeric()
-                    ->default(0),
+                    ->default(0)
+                    ->disabled()
+                    ->helperText('Actualizado automáticamente por movimientos de inventario'),
                 Toggle::make('is_active')
                     ->label('¿Activo?'),
             ]);

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SalesOrders\RelationManagers;
 
+use App\Models\ProductPresentation;
 use Filament\Actions\AssociateAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -37,27 +38,59 @@ class ItemsRelationManager extends RelationManager
             ->columns(2)
             ->components([
                 Select::make('presentation_id')
-                    ->label('Presentación')
-                    ->relationship('presentation', 'format')
+                    ->label('Producto')
                     ->searchable()
-                    ->required(),
+                    ->required()
+                    ->live()
+                    ->getSearchResultsUsing(fn (string $search): array => ProductPresentation::with('product')
+                        ->whereHas('product', fn ($q) => $q->where('name', 'ilike', "%{$search}%"))
+                        ->orWhere('format', 'ilike', "%{$search}%")
+                        ->limit(50)
+                        ->get()
+                        ->mapWithKeys(fn ($p) => [
+                            $p->id => "{$p->product->name} | {$p->presentation_type} {$p->format}",
+                        ])
+                        ->toArray())
+                    ->getOptionLabelUsing(fn ($value): ?string => ($p = ProductPresentation::with('product')->find($value))
+                        ? "{$p->product->name} | {$p->presentation_type} {$p->format}"
+                        : null)
+                    ->afterStateUpdated(function ($state, $set) {
+                        $pres = ProductPresentation::with('prices')->find($state);
+                        if (! $pres) {
+                            return;
+                        }
+                        $price = $pres->prices->first();
+                        if ($price) {
+                            $set('unit_price_usd', $price->price_usd);
+                        }
+                    }),
                 TextInput::make('quantity')
                     ->label('Cantidad')
                     ->required()
                     ->numeric()
-                    ->minValue(0.001),
+                    ->minValue(0.01)
+                    ->step(0.01)
+                    ->live()
+                    ->afterStateUpdated(function ($state, $set, $get) {
+                        $set('subtotal_usd', round(($state ?? 0) * ($get('unit_price_usd') ?? 0), 2));
+                    }),
                 TextInput::make('unit_price_usd')
-                    ->label('Precio Unitario ($)')
+                    ->label('Precio ($)')
                     ->required()
                     ->numeric()
                     ->minValue(0)
-                    ->prefix('$'),
+                    ->step(0.01)
+                    ->prefix('$')
+                    ->live()
+                    ->afterStateUpdated(function ($state, $set, $get) {
+                        $set('subtotal_usd', round(($get('quantity') ?? 0) * ($state ?? 0), 2));
+                    }),
                 TextInput::make('subtotal_usd')
                     ->label('Subtotal ($)')
-                    ->required()
                     ->numeric()
                     ->prefix('$')
-                    ->disabled(),
+                    ->disabled()
+                    ->dehydrated(),
             ]);
     }
 

@@ -20,7 +20,7 @@ class SalesOrderForm
             ->components([
                 Select::make('entity_id')
                     ->label('Cliente')
-                    ->relationship('entity', 'name')
+                    ->relationship('entity', 'name', fn ($q) => $q->where('type', 'customer'))
                     ->searchable()
                     ->required()
                     ->columnSpanFull(),
@@ -63,8 +63,8 @@ class SalesOrderForm
                         TextInput::make('quantity')
                             ->label('Cantidad')
                             ->numeric()
-                            ->minValue(0.001)
-                            ->step(0.001)
+                            ->minValue(0.01)
+                            ->step(0.01)
                             ->required()
                             ->live()
                             ->afterStateUpdated(function ($state, $set, $get) {
@@ -104,7 +104,7 @@ class SalesOrderForm
                     ->prefix('$')
                     ->default(0)
                     ->readOnly()
-                    ->dehydrated()
+                    ->helperText('Calculado automáticamente al guardar')
                     ->columnSpanFull(),
                 Hidden::make('user_id')
                     ->default(fn () => auth()->id()),

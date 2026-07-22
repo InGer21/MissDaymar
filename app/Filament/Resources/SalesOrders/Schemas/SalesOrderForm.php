@@ -39,8 +39,11 @@ class SalesOrderForm
                             ->required()
                             ->live()
                             ->getSearchResultsUsing(fn (string $search): array => ProductPresentation::with('product')
-                                ->whereHas('product', fn ($q) => $q->where('name', 'ilike', "%{$search}%"))
-                                ->orWhere('format', 'ilike', "%{$search}%")
+                                ->whereIn('presentation_type', ['bulto', 'saco'])
+                                ->where(function ($q) use ($search) {
+                                    $q->whereHas('product', fn ($q) => $q->where('name', 'ilike', "%{$search}%"))
+                                      ->orWhere('format', 'ilike', "%{$search}%");
+                                })
                                 ->limit(50)
                                 ->get()
                                 ->mapWithKeys(fn ($p) => [

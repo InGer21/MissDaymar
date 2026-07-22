@@ -56,7 +56,7 @@ class ProfitImportCommand extends Command
         return self::SUCCESS;
     }
 
-    private function insertBatch(string $table, array &$batch, int $maxSize, int $delay = 500000): void
+    private function insertBatch(string $table, array &$batch, int $maxSize, int $delay = 200000): void
     {
         if (count($batch) >= $maxSize) {
             DB::table($table)->insert($batch);
@@ -65,7 +65,7 @@ class ProfitImportCommand extends Command
         }
     }
 
-    private function flushBatch(string $table, array &$batch, int $delay = 500000): void
+    private function flushBatch(string $table, array &$batch, int $delay = 200000): void
     {
         if (! empty($batch)) {
             DB::table($table)->insert($batch);

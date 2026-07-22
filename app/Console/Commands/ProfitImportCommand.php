@@ -56,21 +56,42 @@ class ProfitImportCommand extends Command
         return self::SUCCESS;
     }
 
-    private function insertBatch(string $table, array &$batch, int $maxSize, int $delay = 200000): void
+    private function insertBatch(string $table, array &$batch, int $maxSize, int $delay = 300000): void
     {
         if (count($batch) >= $maxSize) {
-            DB::table($table)->insert($batch);
+            $this->retryInsert($table, $batch);
             $batch = [];
             usleep($delay);
         }
     }
 
-    private function flushBatch(string $table, array &$batch, int $delay = 200000): void
+    private function flushBatch(string $table, array &$batch, int $delay = 300000): void
     {
         if (! empty($batch)) {
-            DB::table($table)->insert($batch);
+            $this->retryInsert($table, $batch);
             $batch = [];
             usleep($delay);
+        }
+    }
+
+    private function retryInsert(string $table, array $rows): void
+    {
+        $maxRetries = 3;
+
+        for ($i = 0; $i < $maxRetries; $i++) {
+            try {
+                DB::table($table)->insert($rows);
+
+                return;
+            } catch (\Exception $e) {
+                if ($i === $maxRetries - 1) {
+                    throw $e;
+                }
+
+                $this->warn('  Retry '.($i + 1).' for '.$table.' ('.count($rows).' rows)...');
+                DB::reconnect();
+                sleep(3);
+            }
         }
     }
 
@@ -179,7 +200,7 @@ class ProfitImportCommand extends Command
 
             $batch[] = [
                 'profit_code' => $coArt,
-                'name' => trim($artDes),
+                'name' => mb_convert_case(trim($artDes), MB_CASE_TITLE, 'UTF-8'),
                 'category_id' => $categories[$catSlug] ?? null,
                 'type' => 'PT',
                 'line_1' => $linDes ?: $coLin,

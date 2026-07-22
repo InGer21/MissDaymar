@@ -439,7 +439,7 @@ class ProfitImportCommand extends Command
                 'fiscal_state' => '',
                 'fiscal_city' => $ciudad && $ciudad !== 'NULL' ? $ciudad : '',
                 'address' => $direc1 !== 'NULL' ? $direc1 : null,
-                'phone' => $telefonos !== 'NULL' ? $telefonos : null,
+                'phone' => ($telefonos && $telefonos !== 'NULL') ? mb_substr($telefonos, 0, 100) : null,
                 'email' => ($email && $email !== 'NULL') ? $email : null,
                 'is_active' => ! $inactivo,
                 'created_at' => $now,

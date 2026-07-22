@@ -408,13 +408,13 @@ class ProfitImportCommand extends Command
         foreach ($rows as $row) {
             $coCli = $row[0] ?? '';
             $cliDes = $row[1] ?? '';
-            $coVen = $row[6] ?? '';
-            $rif = $row[3] ?? '';
-            $direc1 = $row[7] ?? '';
-            $telefonos = $row[9] ?? '';
-            $email = $row[11] ?? '';
-            $ciudad = $row[13] ?? '';
-            $inactivo = (int) ($row[20] ?? 0);
+            $coVen = $row[15] ?? '';
+            $rif = $row[4] ?? '';
+            $direc1 = $row[6] ?? '';
+            $telefonos = $row[8] ?? '';
+            $email = $row[10] ?? '';
+            $ciudad = $row[12] ?? '';
+            $inactivo = (int) ($row[21] ?? 0);
 
             if (empty($coCli) || empty($cliDes)) {
                 continue;

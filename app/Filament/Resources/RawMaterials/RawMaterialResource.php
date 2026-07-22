@@ -86,6 +86,9 @@ class RawMaterialResource extends Resource
 
     public static function getRecordRouteBindingEloquentQuery(): Builder
     {
-        return static::getEloquentQuery();
+        return parent::getRecordRouteBindingEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 }

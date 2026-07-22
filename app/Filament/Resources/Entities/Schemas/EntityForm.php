@@ -30,7 +30,6 @@ class EntityForm
                     ->label('RIF')
                     ->required()
                     ->maxLength(20)
-                    ->unique(ignoreRecord: true)
                     ->placeholder('J-XXXXXXXX-X'),
                 TextInput::make('sunagro')
                     ->label('SUNAGRO')

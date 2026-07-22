@@ -17,10 +17,13 @@ class ProductPresentation extends Model
     protected $fillable = [
         'product_id',
         'presentation_type',
+        'profit_unit_code',
+        'profit_equivalence',
         'format',
         'unit',
         'current_stock',
         'is_active',
+        'is_main_unit',
     ];
 
     public function product(): BelongsTo

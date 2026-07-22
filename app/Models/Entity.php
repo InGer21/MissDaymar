@@ -14,6 +14,9 @@ class Entity extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'profit_code',
+        'profit_vendor',
+        'profit_zone',
         'type',
         'name',
         'rif',

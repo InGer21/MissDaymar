@@ -9,9 +9,11 @@ use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class SalesOrdersTable
 {
@@ -63,6 +65,10 @@ class SalesOrdersTable
                         'invoiced' => 'Facturado',
                         'cancelled' => 'Cancelado',
                     ]),
+                Filter::make('mine')
+                    ->label('Mis Órdenes')
+                    ->query(fn (Builder $query) => $query->where('user_id', auth()->id()))
+                    ->visible(fn () => auth()->user()?->role === 'vendedor'),
                 TrashedFilter::make(),
             ])
             ->recordActions([

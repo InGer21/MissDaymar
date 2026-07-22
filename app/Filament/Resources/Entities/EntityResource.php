@@ -77,11 +77,24 @@ class EntityResource extends Resource
         ];
     }
 
-    public static function getRecordRouteBindingEloquentQuery(): Builder
+    public static function getEloquentQuery(): Builder
     {
-        return parent::getRecordRouteBindingEloquentQuery()
+        $query = parent::getEloquentQuery()
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+
+        $user = auth()->user();
+
+        if ($user && $user->role === 'vendedor') {
+            $query->where('user_id', $user->id);
+        }
+
+        return $query;
+    }
+
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return static::getEloquentQuery();
     }
 }

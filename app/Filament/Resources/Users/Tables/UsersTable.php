@@ -39,6 +39,9 @@ class UsersTable
                 IconColumn::make('is_salesperson')
                     ->label('¿Vendedor?')
                     ->boolean(),
+                IconColumn::make('is_active')
+                    ->label('¿Activo?')
+                    ->boolean(),
                 TextColumn::make('created_at')
                     ->label('Creado')
                     ->dateTime()

@@ -43,6 +43,9 @@ class UserForm
                     ->default('vendedor'),
                 Toggle::make('is_salesperson')
                     ->label('¿Es vendedor?'),
+                Toggle::make('is_active')
+                    ->label('¿Activo?')
+                    ->default(true),
             ]);
     }
 }

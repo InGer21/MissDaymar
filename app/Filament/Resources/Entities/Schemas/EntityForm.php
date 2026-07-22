@@ -55,6 +55,12 @@ class EntityForm
                     ->maxLength(255),
                 Toggle::make('is_active')
                     ->label('¿Activo?'),
+                Select::make('user_id')
+                    ->label('Vendedor')
+                    ->relationship('vendor', 'name', fn ($q) => $q->where('is_salesperson', true)->where('is_active', true))
+                    ->searchable()
+                    ->preload()
+                    ->visible(fn () => auth()->user()?->role === 'admin'),
             ]);
     }
 }

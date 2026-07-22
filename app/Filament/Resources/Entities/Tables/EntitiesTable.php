@@ -44,6 +44,9 @@ class EntitiesTable
                     ->label('Estado'),
                 TextColumn::make('fiscal_city')
                     ->label('Ciudad'),
+                TextColumn::make('vendor.name')
+                    ->label('Vendedor')
+                    ->visible(fn () => auth()->user()?->role === 'admin'),
                 IconColumn::make('is_active')
                     ->label('¿Activo?')
                     ->boolean(),

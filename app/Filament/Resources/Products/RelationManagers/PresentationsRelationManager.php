@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Products\RelationManagers;
 
-use Filament\Actions\AssociateAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -37,10 +36,10 @@ class PresentationsRelationManager extends RelationManager
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->columns(2)
+            ->columns(3)
             ->components([
                 Select::make('presentation_type')
-                    ->label('Tipo de Presentación')
+                    ->label('Tipo')
                     ->required()
                     ->options([
                         'bolsa_individual' => 'Bolsa Individual',
@@ -66,8 +65,25 @@ class PresentationsRelationManager extends RelationManager
                         'sack' => 'Saco',
                         'multipack' => 'Multipack',
                     ]),
+                TextInput::make('price_usd')
+                    ->label('Precio (USD)')
+                    ->numeric()
+                    ->prefix('$')
+                    ->default(0)
+                    ->afterStateHydrated(function ($record, $set) {
+                        $price = $record?->prices?->first()?->price_usd;
+                        $set('price_usd', $price);
+                    })
+                    ->dehydrateStateUsing(function ($state, $record) {
+                        if ($record && $state !== null && $state !== '') {
+                            session()->put('price_usd_'.$record->id, (float) $state);
+                        }
+
+                        return null;
+                    })
+                    ->dehydrated(false),
                 TextInput::make('current_stock')
-                    ->label('Stock Actual')
+                    ->label('Stock')
                     ->required()
                     ->numeric()
                     ->default(0),
@@ -88,6 +104,10 @@ class PresentationsRelationManager extends RelationManager
                     ->searchable(),
                 TextColumn::make('unit')
                     ->label('Unidad'),
+                TextColumn::make('price_usd')
+                    ->label('Precio ($)')
+                    ->money('USD')
+                    ->state(fn ($record) => $record->prices->first()?->price_usd),
                 TextColumn::make('current_stock')
                     ->label('Stock')
                     ->numeric()
@@ -101,18 +121,15 @@ class PresentationsRelationManager extends RelationManager
             ])
             ->headerActions([
                 CreateAction::make(),
-                AssociateAction::make(),
             ])
             ->recordActions([
                 EditAction::make(),
-                DissociateAction::make(),
                 DeleteAction::make(),
                 ForceDeleteAction::make(),
                 RestoreAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DissociateBulkAction::make(),
                     DeleteBulkAction::make(),
                     ForceDeleteBulkAction::make(),
                     RestoreBulkAction::make(),

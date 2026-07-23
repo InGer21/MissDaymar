@@ -249,14 +249,15 @@ class ProfitImportCommand extends Command
             }
 
             $productId = $products[$coArt];
-            $key = $productId.'|'.$coUni;
+            $mapping = $this->unitMap[strtoupper($coUni)] ?? ['type' => 'por_kilo', 'unit' => 'unit'];
+
+            $key = $productId.'|'.$mapping['type'].'|'.$mapping['unit'].'|'.((string) $equivalencia);
 
             if (isset($allExisting[$key]) || isset($seen[$key])) {
                 continue;
             }
 
             $seen[$key] = true;
-            $mapping = $this->unitMap[strtoupper($coUni)] ?? ['type' => 'por_kilo', 'unit' => 'unit'];
 
             $batch[] = [
                 'product_id' => $productId,
@@ -460,7 +461,7 @@ class ProfitImportCommand extends Command
 
         $rows = $this->parseTsv('inventario.txt');
         $products = Product::pluck('id', 'profit_code');
-        $presentations = ProductPresentation::select('id', 'product_id', 'is_main_unit')
+        $presentations = ProductPresentation::select('id', 'product_id', 'presentation_type', 'is_main_unit')
             ->get()
             ->groupBy('product_id');
 
@@ -482,7 +483,9 @@ class ProfitImportCommand extends Command
             }
 
             $presList = $presentations[$productId];
-            $presId = $presList->firstWhere('is_main_unit', true)?->id
+            $presId = $presList->firstWhere('presentation_type', 'saco')?->id
+                ?? $presList->firstWhere('presentation_type', 'bulto')?->id
+                ?? $presList->firstWhere('is_main_unit', true)?->id
                 ?? $presList->first()?->id;
 
             if (! $presId) {

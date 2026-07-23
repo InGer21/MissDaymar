@@ -45,7 +45,10 @@ class Product extends Model
     public function getTotalStockAttribute(): float
     {
         return (float) $this->presentations()
-            ->whereIn('presentation_type', ['bulto', 'saco'])
+            ->where(function ($q) {
+                $q->where('presentation_type', 'bulto')
+                  ->orWhere(fn ($q) => $q->where('presentation_type', 'por_kilo')->where('unit', 'unit'));
+            })
             ->sum('current_stock');
     }
 }

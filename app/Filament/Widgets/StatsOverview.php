@@ -15,7 +15,10 @@ class StatsOverview extends BaseWidget
 
     protected function getStats(): array
     {
-        $stockCount = ProductPresentation::whereIn('presentation_type', ['bulto', 'saco'])
+        $stockCount = ProductPresentation::where(function ($q) {
+                $q->where('presentation_type', 'bulto')
+                  ->orWhere(fn ($q) => $q->where('presentation_type', 'por_kilo')->where('unit', 'unit'));
+            })
             ->where('current_stock', '>', 0)
             ->distinct('product_id')
             ->count('product_id');

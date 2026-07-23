@@ -41,6 +41,12 @@ class ProductsTable
                         'Ambos' => 'Ambos',
                         'Puro' => 'Producto Puro',
                     }),
+                TextColumn::make('total_stock')
+                    ->label('Stock')
+                    ->numeric()
+                    ->sortable()
+                    ->color(fn ($state) => $state > 0 ? 'success' : ($state < 0 ? 'danger' : 'gray'))
+                    ->tooltip(fn ($state) => $state > 0 ? "{$state} disponibles" : ($state < 0 ? 'Stock negativo' : 'Sin stock')),
                 TextColumn::make('line_1')
                     ->label('Línea 1')
                     ->searchable(),

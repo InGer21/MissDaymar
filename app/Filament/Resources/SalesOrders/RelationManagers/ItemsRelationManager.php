@@ -46,7 +46,7 @@ class ItemsRelationManager extends RelationManager
                         ->whereIn('presentation_type', ['bulto', 'saco'])
                         ->where(function ($q) use ($search) {
                             $q->whereHas('product', fn ($q) => $q->where('name', 'ilike', "%{$search}%"))
-                              ->orWhere('format', 'ilike', "%{$search}%");
+                                ->orWhere('format', 'ilike', "%{$search}%");
                         })
                         ->limit(50)
                         ->get()

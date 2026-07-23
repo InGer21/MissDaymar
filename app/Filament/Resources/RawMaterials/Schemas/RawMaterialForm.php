@@ -49,6 +49,11 @@ class RawMaterialForm
                 Textarea::make('notes')
                     ->label('Notas')
                     ->columnSpanFull(),
+                TextInput::make('stock')
+                    ->label('Stock Actual')
+                    ->numeric()
+                    ->disabled()
+                    ->helperText('Stock del producto asociado. Se actualiza con conversiones.'),
             ]);
     }
 }

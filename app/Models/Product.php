@@ -41,4 +41,11 @@ class Product extends Model
     {
         return $this->hasMany(RawMaterial::class);
     }
+
+    public function getTotalStockAttribute(): float
+    {
+        return (float) $this->presentations()
+            ->whereIn('presentation_type', ['bulto', 'saco'])
+            ->sum('current_stock');
+    }
 }

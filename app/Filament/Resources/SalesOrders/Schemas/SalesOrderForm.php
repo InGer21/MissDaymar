@@ -24,7 +24,11 @@ class SalesOrderForm
                 static::notesField(),
                 static::itemsRepeater(),
                 static::totalField(),
-                static::hiddenFields(),
+                Hidden::make('user_id')
+                    ->default(fn () => auth()->id()),
+                TextInput::make('profit_doc_num')
+                    ->label('N° Documento Profit')
+                    ->maxLength(50),
             ]);
     }
 
@@ -172,16 +176,5 @@ class SalesOrderForm
             ->readOnly()
             ->helperText('Calculado automáticamente al guardar')
             ->columnSpanFull();
-    }
-
-    private static function hiddenFields(): array
-    {
-        return [
-            Hidden::make('user_id')
-                ->default(fn () => auth()->id()),
-            TextInput::make('profit_doc_num')
-                ->label('N° Documento Profit')
-                ->maxLength(50),
-        ];
     }
 }

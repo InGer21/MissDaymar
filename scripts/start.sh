@@ -19,4 +19,6 @@ php artisan profit:import 2>&1 || echo "⚠️ Profit import failed — check lo
 
 php artisan catalog:import 2>&1 || echo "⚠️ Catalog import failed — check logs"
 
+php artisan inventory:import 2>&1 || echo "⚠️ Inventory import failed — check logs"
+
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf

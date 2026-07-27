@@ -52,8 +52,7 @@ class ItemsRelationManager extends RelationManager
                     ->afterStateUpdated(function ($state, $set) {
                         $set('presentation_id', null);
                         $set('unit_price_usd', null);
-                    })
-                    ->dehydrated(false),
+                    }),
                 Select::make('presentation_id')
                     ->label('Presentación')
                     ->required()

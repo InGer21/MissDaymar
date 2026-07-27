@@ -96,8 +96,7 @@ class SalesOrderForm
             ->afterStateUpdated(function ($state, $set) {
                 $set('presentation_id', null);
                 $set('unit_price_usd', null);
-            })
-            ->dehydrated(false);
+            });
     }
 
     private static function presentationSelect(): Select

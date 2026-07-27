@@ -34,26 +34,17 @@ class CatalogImportCommand extends Command
     {
         $this->info('=== Catalog Import ===');
 
-        $hasDuplicates = DB::table('products')
-            ->selectRaw('sku, COUNT(*)')
-            ->whereNotNull('sku')
-            ->groupBy('sku')
-            ->havingRaw('COUNT(*) > 1')
-            ->exists();
+        $this->cleanGarbage();
 
-        $isEmpty = ! Product::whereNotNull('sku')->exists();
+        $hasCatalog = Product::whereNotNull('sku')->exists();
 
-        if (! $isEmpty && ! $hasDuplicates && ! $this->option('force')) {
-            $this->info('Catalog already imported and clean. Use --force to reimport.');
+        if ($hasCatalog && ! $this->option('force')) {
+            $this->info('Catalog already imported. Use --force to reimport.');
 
             return self::SUCCESS;
         }
 
-        if ($hasDuplicates) {
-            $this->warn('Duplicate products found. Cleaning and reimporting...');
-        }
-
-        $this->cleanOld();
+        $this->cleanAll();
         $this->importCategories();
         $this->importProducts();
         $this->importPresentations();
@@ -63,16 +54,35 @@ class CatalogImportCommand extends Command
         return self::SUCCESS;
     }
 
-    private function cleanOld(): void
+    private function cleanGarbage(): void
     {
-        $this->info('Cleaning old data...');
+        $this->info('Cleaning garbage data...');
+
+        DB::table('entities')->whereNull('user_id')->update(['user_id' => 1]);
+
+        DB::table('product_presentations')
+            ->whereIn('product_id', Product::whereNull('sku')->pluck('id'))
+            ->delete();
+
+        Product::whereNull('sku')->forceDelete();
+
+        DB::table('categories')->where('slug', 'general')->delete();
+
+        DB::table('raw_materials')->delete();
+
+        $this->info('  -> Garbage cleaned');
+    }
+
+    private function cleanAll(): void
+    {
+        $this->info('Cleaning all catalog data...');
 
         DB::table('presentation_prices')->delete();
         DB::table('product_presentations')->delete();
         Product::query()->forceDelete();
         DB::table('categories')->where('slug', 'general')->delete();
 
-        $this->info('  -> Cleaned');
+        $this->info('  -> All cleaned');
     }
 
     private function importCategories(): void
@@ -136,7 +146,7 @@ class CatalogImportCommand extends Command
             }
 
             $products[$productKey] = [
-                'sku' => $sku,
+                'sku' => substr($sku, 0, 4),
                 'name' => $name,
                 'category_id' => $categories[$catSlug] ?? null,
                 'type' => 'PT',
@@ -188,8 +198,8 @@ class CatalogImportCommand extends Command
                 continue;
             }
 
-            $productSku = substr($sku, 0, 5);
-            $productId = $products[$productSku] ?? $products[$sku] ?? null;
+            $productSku = substr($sku, 0, 4);
+            $productId = $products[$productSku] ?? null;
 
             if (! $productId) {
                 continue;

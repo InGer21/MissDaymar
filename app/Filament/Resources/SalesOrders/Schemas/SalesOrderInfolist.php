@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\SalesOrders\Schemas;
 
 use App\Models\SalesOrder;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 
@@ -36,6 +38,32 @@ class SalesOrderInfolist
                 TextEntry::make('total_usd')
                     ->label('Total ($)')
                     ->numeric(),
+                TextEntry::make('profit_doc_num')
+                    ->label('N° Doc. Profit')
+                    ->placeholder('-'),
+                Section::make('Items')
+                    ->description(fn (SalesOrder $record) => $record->items->count().' items')
+                    ->schema([
+                        RepeatableEntry::make('items')
+                            ->label('')
+                            ->schema([
+                                TextEntry::make('presentation.product.name')
+                                    ->label('Producto'),
+                                TextEntry::make('presentation.format')
+                                    ->label('Presentación'),
+                                TextEntry::make('quantity')
+                                    ->label('Cant.')
+                                    ->numeric(),
+                                TextEntry::make('unit_price_usd')
+                                    ->label('Precio ($)')
+                                    ->numeric(),
+                                TextEntry::make('subtotal_usd')
+                                    ->label('Subtotal ($)')
+                                    ->numeric(),
+                            ])
+                            ->columns(5),
+                    ])
+                    ->columnSpanFull(),
                 TextEntry::make('deleted_at')
                     ->label('Eliminada')
                     ->dateTime()

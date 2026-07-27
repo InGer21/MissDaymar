@@ -36,8 +36,8 @@ class UsersTable
                         'vendedor' => 'Vendedor',
                         'facturacion' => 'Facturación',
                     }),
-                IconColumn::make('is_salesperson')
-                    ->label('¿Vendedor?')
+                IconColumn::make('is_active')
+                    ->label('¿Activo?')
                     ->boolean(),
                 TextColumn::make('created_at')
                     ->label('Creado')

@@ -16,9 +16,15 @@ class ProductInfolist
             ->components([
                 TextEntry::make('name')
                     ->label('Nombre'),
+                TextEntry::make('sku')
+                    ->label('SKU')
+                    ->placeholder('-'),
                 TextEntry::make('category.name')
                     ->label('Categoría')
                     ->placeholder('-'),
+                TextEntry::make('total_stock')
+                    ->label('Stock Total')
+                    ->numeric(),
                 TextEntry::make('type')
                     ->label('Tipo')
                     ->formatStateUsing(fn (string $state): string => match ($state) {

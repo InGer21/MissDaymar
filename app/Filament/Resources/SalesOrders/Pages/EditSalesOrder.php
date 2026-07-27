@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SalesOrders\Pages;
 
+use App\Filament\Resources\Invoices\InvoiceResource;
 use App\Filament\Resources\SalesOrders\SalesOrderResource;
 use App\Models\SalesOrder;
 use Filament\Actions\Action;
@@ -41,7 +42,35 @@ class EditSalesOrder extends EditRecord
                 ->action(fn () => $this->updateStatus('under_review'));
         }
 
-        if (in_array($record->status, ['pending', 'under_review'])) {
+        if ($record->status === 'under_review') {
+            $actions[] = Action::make('mark_pending')
+                ->label('Devolver a pendiente')
+                ->color('gray')
+                ->icon('heroicon-o-arrow-uturn-left')
+                ->action(fn () => $this->updateStatus('pending'));
+
+            $actions[] = Action::make('mark_invoicing')
+                ->label('Enviar a facturación')
+                ->color('info')
+                ->icon('heroicon-o-document-currency-dollar')
+                ->action(fn () => $this->updateStatus('invoicing'));
+        }
+
+        if ($record->status === 'invoicing') {
+            $actions[] = Action::make('mark_review')
+                ->label('Devolver a revisión')
+                ->color('gray')
+                ->icon('heroicon-o-arrow-uturn-left')
+                ->action(fn () => $this->updateStatus('under_review'));
+
+            $actions[] = Action::make('invoice')
+                ->label('Crear Factura')
+                ->color('success')
+                ->icon('heroicon-o-document-check')
+                ->url(InvoiceResource::getUrl('create', ['sales_order_id' => $record->id]));
+        }
+
+        if (in_array($record->status, ['pending', 'under_review', 'invoicing'])) {
             $actions[] = Action::make('mark_cancelled')
                 ->label('Cancelar')
                 ->color('danger')
@@ -50,12 +79,13 @@ class EditSalesOrder extends EditRecord
                 ->action(fn () => $this->updateStatus('cancelled'));
         }
 
-        if ($record->status === 'under_review') {
-            $actions[] = Action::make('mark_invoicing')
-                ->label('Enviar a facturación')
-                ->color('info')
-                ->icon('heroicon-o-document-currency-dollar')
-                ->action(fn () => $this->updateStatus('invoicing'));
+        if ($record->status === 'cancelled') {
+            $actions[] = Action::make('reopen')
+                ->label('Reabrir')
+                ->color('warning')
+                ->icon('heroicon-o-arrow-path')
+                ->requiresConfirmation()
+                ->action(fn () => $this->updateStatus('pending'));
         }
 
         return $actions;
@@ -65,6 +95,24 @@ class EditSalesOrder extends EditRecord
     {
         /** @var SalesOrder $record */
         $record = $this->getRecord();
+
+        $validFrom = match ($status) {
+            'under_review' => ['pending'],
+            'invoicing' => ['under_review'],
+            'cancelled' => ['pending', 'under_review', 'invoicing'],
+            'pending' => ['under_review', 'cancelled'],
+            default => [],
+        };
+
+        if (! empty($validFrom) && ! in_array($record->status, $validFrom)) {
+            Notification::make()
+                ->title('No se puede cambiar a este estado desde '.$record->status)
+                ->danger()
+                ->send();
+
+            return;
+        }
+
         $record->update(['status' => $status]);
 
         $labels = [

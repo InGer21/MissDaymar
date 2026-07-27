@@ -45,6 +45,9 @@ class EntityInfolist
                 IconEntry::make('is_active')
                     ->label('¿Activo?')
                     ->boolean(),
+                TextEntry::make('vendor.name')
+                    ->label('Vendedor')
+                    ->placeholder('-'),
                 TextEntry::make('deleted_at')
                     ->label('Eliminado')
                     ->dateTime()

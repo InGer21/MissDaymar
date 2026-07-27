@@ -28,6 +28,9 @@ class RawMaterialInfolist
                     ->label('Costo Unitario ($)')
                     ->numeric()
                     ->placeholder('-'),
+                TextEntry::make('stock')
+                    ->label('Stock Actual')
+                    ->numeric(),
                 TextEntry::make('notes')
                     ->label('Notas')
                     ->placeholder('-')

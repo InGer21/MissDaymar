@@ -15,14 +15,12 @@ class Product extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'profit_code',
+        'sku',
         'name',
         'category_id',
         'type',
         'line_1',
         'line_2',
-        'profit_line',
-        'profit_subl',
         'is_pure',
         'is_service',
     ];
@@ -40,5 +38,12 @@ class Product extends Model
     public function rawMaterials(): HasMany
     {
         return $this->hasMany(RawMaterial::class);
+    }
+
+    public function getTotalStockAttribute(): float
+    {
+        return (float) $this->presentations()
+            ->whereNotIn('presentation_type', ['saco'])
+            ->sum('current_stock');
     }
 }

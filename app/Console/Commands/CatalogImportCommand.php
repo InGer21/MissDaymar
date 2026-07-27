@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 
 class CatalogImportCommand extends Command
 {
-    protected $signature = 'catalog:import';
+    protected $signature = 'catalog:import {--force : Reimport even if catalog exists}';
 
     protected $description = 'Importa el catálogo limpio desde CSV con SKU';
 
@@ -34,12 +34,29 @@ class CatalogImportCommand extends Command
     {
         $this->info('=== Catalog Import ===');
 
-        DB::transaction(function () {
-            $this->cleanOld();
-            $this->importCategories();
-            $this->importProducts();
-            $this->importPresentations();
-        });
+        $hasDuplicates = DB::table('products')
+            ->selectRaw('sku, COUNT(*)')
+            ->whereNotNull('sku')
+            ->groupBy('sku')
+            ->havingRaw('COUNT(*) > 1')
+            ->exists();
+
+        $isEmpty = ! Product::whereNotNull('sku')->exists();
+
+        if (! $isEmpty && ! $hasDuplicates && ! $this->option('force')) {
+            $this->info('Catalog already imported and clean. Use --force to reimport.');
+
+            return self::SUCCESS;
+        }
+
+        if ($hasDuplicates) {
+            $this->warn('Duplicate products found. Cleaning and reimporting...');
+        }
+
+        $this->cleanOld();
+        $this->importCategories();
+        $this->importProducts();
+        $this->importPresentations();
 
         $this->info('=== Done ===');
 
@@ -51,8 +68,8 @@ class CatalogImportCommand extends Command
         $this->info('Cleaning old data...');
 
         DB::table('presentation_prices')->delete();
-        DB::table('product_presentations')->whereNotNull('profit_unit_code')->delete();
-        Product::whereNotNull('profit_code')->forceDelete();
+        DB::table('product_presentations')->delete();
+        Product::query()->forceDelete();
         DB::table('categories')->where('slug', 'general')->delete();
 
         $this->info('  -> Cleaned');
@@ -145,7 +162,7 @@ class CatalogImportCommand extends Command
             $count++;
         }
 
-        DB::table('products')->insert($batch);
+        DB::table('products')->insertOrIgnore($batch);
         $this->info("  -> {$count} products");
     }
 

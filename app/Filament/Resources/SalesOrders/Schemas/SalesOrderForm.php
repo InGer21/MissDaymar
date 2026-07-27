@@ -20,11 +20,7 @@ class SalesOrderForm
             ->components([
                 Select::make('entity_id')
                     ->label('Cliente')
-                    ->relationship(
-                        name: 'entity',
-                        titleAttribute: 'name',
-                        modifyQueryUsing: fn ($q) => $q->where('type', 'customer'),
-                    )
+                    ->relationship('entity', 'name')
                     ->searchable()
                     ->required()
                     ->columnSpanFull(),

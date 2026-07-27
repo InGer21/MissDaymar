@@ -37,7 +37,6 @@ class RawMaterialsTable
                 TextColumn::make('stock')
                     ->label('Stock')
                     ->numeric()
-                    ->sortable()
                     ->color(fn ($state) => $state > 0 ? 'success' : ($state < 0 ? 'danger' : 'gray')),
             ])
             ->filters([

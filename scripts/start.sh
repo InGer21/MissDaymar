@@ -15,8 +15,6 @@ php artisan view:cache
 
 php artisan migrate --force 2>&1 || echo "⚠️ Migration failed — check logs"
 
-php artisan profit:import 2>&1 || echo "⚠️ Profit import failed — check logs"
-
 php artisan catalog:import 2>&1 || echo "⚠️ Catalog import failed — check logs"
 
 php artisan inventory:import 2>&1 || echo "⚠️ Inventory import failed — check logs"

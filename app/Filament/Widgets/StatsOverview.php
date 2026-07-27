@@ -33,7 +33,7 @@ class StatsOverview extends BaseWidget
                 ->description('Productos disponibles')
                 ->descriptionIcon('heroicon-o-archive-box')
                 ->color('warning'),
-            Stat::make('Vendedores', User::where('is_salesperson', true)->where('is_active', true)->count())
+            Stat::make('Vendedores', User::where('role', 'vendedor')->where('is_active', true)->count())
                 ->description('Activos')
                 ->descriptionIcon('heroicon-o-user-group')
                 ->color('info'),

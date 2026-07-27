@@ -48,15 +48,6 @@ class EntityInfolist
                 TextEntry::make('vendor.name')
                     ->label('Vendedor')
                     ->placeholder('-'),
-                TextEntry::make('profit_code')
-                    ->label('Código Profit')
-                    ->placeholder('-'),
-                TextEntry::make('profit_vendor')
-                    ->label('Vendor Profit')
-                    ->placeholder('-'),
-                TextEntry::make('profit_zone')
-                    ->label('Zona Profit')
-                    ->placeholder('-'),
                 TextEntry::make('deleted_at')
                     ->label('Eliminado')
                     ->dateTime()

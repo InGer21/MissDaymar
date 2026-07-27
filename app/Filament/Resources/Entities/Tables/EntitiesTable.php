@@ -47,9 +47,6 @@ class EntitiesTable
                 TextColumn::make('vendor.name')
                     ->label('Vendedor')
                     ->visible(fn () => auth()->user()?->role === 'admin'),
-                TextColumn::make('profit_code')
-                    ->label('Cód. Profit')
-                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('phone')
                     ->label('Teléfono')
                     ->toggleable(isToggledHiddenByDefault: true),

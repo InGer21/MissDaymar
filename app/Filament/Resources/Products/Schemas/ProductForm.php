@@ -4,7 +4,6 @@ namespace App\Filament\Resources\Products\Schemas;
 
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 
 class ProductForm
@@ -40,17 +39,6 @@ class ProductForm
                 TextInput::make('line_2')
                     ->label('Línea 2')
                     ->maxLength(50),
-                TextInput::make('profit_code')
-                    ->label('Código Profit')
-                    ->maxLength(30),
-                TextInput::make('profit_line')
-                    ->label('Línea Profit')
-                    ->maxLength(50),
-                TextInput::make('profit_subl')
-                    ->label('Sublínea Profit')
-                    ->maxLength(50),
-                Toggle::make('is_service')
-                    ->label('¿Es Servicio?'),
             ]);
     }
 }

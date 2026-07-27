@@ -41,14 +41,9 @@ class UserForm
                         'facturacion' => 'Facturación',
                     ])
                     ->default('vendedor'),
-                Toggle::make('is_salesperson')
-                    ->label('¿Es vendedor?'),
                 Toggle::make('is_active')
                     ->label('¿Activo?')
                     ->default(true),
-                TextInput::make('profit_code')
-                    ->label('Código Profit')
-                    ->maxLength(20),
             ]);
     }
 }

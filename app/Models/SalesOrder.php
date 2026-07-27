@@ -16,7 +16,6 @@ class SalesOrder extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'profit_doc_num',
         'entity_id',
         'user_id',
         'status',

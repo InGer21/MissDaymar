@@ -57,9 +57,6 @@ class SalesOrdersTable
                     ->label('Total ($)')
                     ->numeric()
                     ->sortable(),
-                TextColumn::make('profit_doc_num')
-                    ->label('Doc. Profit')
-                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->label('Creada')
                     ->dateTime()

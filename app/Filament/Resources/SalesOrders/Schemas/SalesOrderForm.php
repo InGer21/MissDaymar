@@ -26,9 +26,6 @@ class SalesOrderForm
                 static::totalField(),
                 Hidden::make('user_id')
                     ->default(fn () => auth()->id()),
-                TextInput::make('profit_doc_num')
-                    ->label('N° Documento Profit')
-                    ->maxLength(50),
             ]);
     }
 

@@ -17,8 +17,6 @@ class ProductPresentation extends Model
     protected $fillable = [
         'product_id',
         'presentation_type',
-        'profit_unit_code',
-        'profit_equivalence',
         'format',
         'unit',
         'is_active',

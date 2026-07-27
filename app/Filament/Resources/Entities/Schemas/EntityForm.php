@@ -57,21 +57,9 @@ class EntityForm
                     ->label('¿Activo?'),
                 Select::make('user_id')
                     ->label('Vendedor')
-                    ->relationship('vendor', 'name', fn ($q) => $q->where('is_salesperson', true)->where('is_active', true))
+                    ->relationship('vendor', 'name', fn ($q) => $q->where('role', 'vendedor')->where('is_active', true))
                     ->searchable()
                     ->preload()
-                    ->visible(fn () => auth()->user()?->role === 'admin'),
-                TextInput::make('profit_code')
-                    ->label('Código Profit')
-                    ->maxLength(20)
-                    ->visible(fn () => auth()->user()?->role === 'admin'),
-                TextInput::make('profit_vendor')
-                    ->label('Vendor Profit')
-                    ->maxLength(20)
-                    ->visible(fn () => auth()->user()?->role === 'admin'),
-                TextInput::make('profit_zone')
-                    ->label('Zona Profit')
-                    ->maxLength(20)
                     ->visible(fn () => auth()->user()?->role === 'admin'),
             ]);
     }

@@ -51,11 +51,11 @@ class ItemsRelationManager extends RelationManager
                         ->limit(50)
                         ->get()
                         ->mapWithKeys(fn ($p) => [
-                            $p->id => ($p->product->sku ? "[{$p->product->sku}] " : '')."{$p->product->name} | {$p->presentation_type} {$p->format}",
+                            $p->id => ($p->product->sku ? "[{$p->product->sku}] " : '')."{$p->product->name} — {$p->format}{$p->unit}",
                         ])
                         ->toArray())
                     ->getOptionLabelUsing(fn ($value): ?string => ($p = ProductPresentation::with('product')->find($value))
-                        ? ($p->product->sku ? "[{$p->product->sku}] " : '')."{$p->product->name} | {$p->presentation_type} {$p->format}"
+                        ? ($p->product->sku ? "[{$p->product->sku}] " : '')."{$p->product->name} — {$p->format}{$p->unit}"
                         : null)
                     ->afterStateUpdated(function ($state, $set) {
                         $pres = ProductPresentation::with('prices')->find($state);

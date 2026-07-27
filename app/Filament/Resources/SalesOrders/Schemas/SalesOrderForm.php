@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SalesOrders\Schemas;
 
+use App\Models\Entity;
 use App\Models\ProductPresentation;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
@@ -20,9 +21,14 @@ class SalesOrderForm
             ->components([
                 Select::make('entity_id')
                     ->label('Cliente')
-                    ->relationship('entity', 'name')
                     ->searchable()
                     ->required()
+                    ->getSearchResultsUsing(fn (string $search): array => Entity::where('name', 'ilike', "%{$search}%")
+                        ->limit(50)
+                        ->pluck('name', 'id')
+                        ->toArray()
+                    )
+                    ->getOptionLabelUsing(fn ($value): ?string => Entity::find($value)?->name)
                     ->columnSpanFull(),
                 Textarea::make('notes')
                     ->label('Notas')
@@ -47,11 +53,11 @@ class SalesOrderForm
                                 ->limit(50)
                                 ->get()
                                 ->mapWithKeys(fn ($p) => [
-                                    $p->id => ($p->product->sku ? "[{$p->product->sku}] " : '')."{$p->product->name} | {$p->presentation_type} {$p->format}",
+                                    $p->id => ($p->product->sku ? "[{$p->product->sku}] " : '')."{$p->product->name} — {$p->format}{$p->unit}",
                                 ])
                                 ->toArray())
                             ->getOptionLabelUsing(fn ($value): ?string => ($p = ProductPresentation::with('product')->find($value))
-                                ? ($p->product->sku ? "[{$p->product->sku}] " : '')."{$p->product->name} | {$p->presentation_type} {$p->format}"
+                                ? ($p->product->sku ? "[{$p->product->sku}] " : '')."{$p->product->name} — {$p->format}{$p->unit}"
                                 : null)
                             ->afterStateUpdated(function ($state, $set) {
                                 $pres = ProductPresentation::with('prices')->find($state);

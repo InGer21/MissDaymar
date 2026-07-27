@@ -8,6 +8,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -20,6 +21,7 @@ class SalesOrdersTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('id')
                     ->label('#')
@@ -30,6 +32,10 @@ class SalesOrdersTable
                 TextColumn::make('user.name')
                     ->label('Creado por')
                     ->searchable(),
+                TextColumn::make('items_count')
+                    ->label('Items')
+                    ->counts('items')
+                    ->sortable(),
                 TextColumn::make('status')
                     ->label('Estado')
                     ->badge()
@@ -68,6 +74,14 @@ class SalesOrdersTable
                         'invoiced' => 'Facturado',
                         'cancelled' => 'Cancelado',
                     ]),
+                Filter::make('created_at')
+                    ->form([
+                        DatePicker::make('from')->label('Desde'),
+                        DatePicker::make('until')->label('Hasta'),
+                    ])
+                    ->query(fn (Builder $query, array $data): Builder => $query
+                        ->when($data['from'], fn ($q, $d) => $q->whereDate('created_at', '>=', $d))
+                        ->when($data['until'], fn ($q, $d) => $q->whereDate('created_at', '<=', $d))),
                 Filter::make('mine')
                     ->label('Mis Órdenes')
                     ->query(fn (Builder $query) => $query->where('user_id', auth()->id()))

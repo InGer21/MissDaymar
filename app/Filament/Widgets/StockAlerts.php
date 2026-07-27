@@ -20,17 +20,11 @@ class StockAlerts extends TableWidget
             ->query(
                 Product::query()
                     ->whereHas('presentations', fn ($q) => $q
-                        ->where(function ($q) {
-                            $q->where('presentation_type', 'bulto')
-                              ->orWhere(fn ($q) => $q->where('presentation_type', 'por_kilo')->where('unit', 'unit'));
-                        })
+                        ->whereNotIn('presentation_type', ['saco'])
                         ->where('current_stock', '<=', 0)
                     )
                     ->withSum(['presentations as total_stock' => fn ($q) => $q
-                        ->where(function ($q) {
-                            $q->where('presentation_type', 'bulto')
-                              ->orWhere(fn ($q) => $q->where('presentation_type', 'por_kilo')->where('unit', 'unit'));
-                        })], 'current_stock')
+                        ->whereNotIn('presentation_type', ['saco'])], 'current_stock')
             )
             ->columns([
                 TextColumn::make('name')

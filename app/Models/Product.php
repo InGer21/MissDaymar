@@ -15,6 +15,7 @@ class Product extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'sku',
         'profit_code',
         'name',
         'category_id',
@@ -45,10 +46,7 @@ class Product extends Model
     public function getTotalStockAttribute(): float
     {
         return (float) $this->presentations()
-            ->where(function ($q) {
-                $q->where('presentation_type', 'bulto')
-                  ->orWhere(fn ($q) => $q->where('presentation_type', 'por_kilo')->where('unit', 'unit'));
-            })
+            ->whereNotIn('presentation_type', ['saco'])
             ->sum('current_stock');
     }
 }

@@ -16,6 +16,9 @@ class ProductInfolist
             ->components([
                 TextEntry::make('name')
                     ->label('Nombre'),
+                TextEntry::make('sku')
+                    ->label('SKU')
+                    ->placeholder('-'),
                 TextEntry::make('category.name')
                     ->label('Categoría')
                     ->placeholder('-'),

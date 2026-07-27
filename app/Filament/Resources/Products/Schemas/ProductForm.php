@@ -18,6 +18,10 @@ class ProductForm
                     ->label('Nombre')
                     ->required()
                     ->maxLength(255),
+                TextInput::make('sku')
+                    ->label('SKU')
+                    ->maxLength(10)
+                    ->unique(ignoreRecord: true),
                 Select::make('category_id')
                     ->label('Categoría')
                     ->relationship('category', 'name'),

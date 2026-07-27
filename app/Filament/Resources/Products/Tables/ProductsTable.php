@@ -20,6 +20,10 @@ class ProductsTable
     {
         return $table
             ->columns([
+                TextColumn::make('sku')
+                    ->label('SKU')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('name')
                     ->label('Nombre')
                     ->searchable(),

@@ -39,22 +39,19 @@ class SalesOrderForm
                             ->required()
                             ->live()
                             ->getSearchResultsUsing(fn (string $search): array => ProductPresentation::with('product')
-                                ->where(function ($q) {
-                                    $q->where('presentation_type', 'bulto')
-                                      ->orWhere(fn ($q) => $q->where('presentation_type', 'por_kilo')->where('unit', 'unit'));
-                                })
+                                ->whereNotIn('presentation_type', ['saco'])
                                 ->where(function ($q) use ($search) {
                                     $q->whereHas('product', fn ($q) => $q->where('name', 'ilike', "%{$search}%"))
-                                      ->orWhere('format', 'ilike', "%{$search}%");
+                                        ->orWhere('format', 'ilike', "%{$search}%");
                                 })
                                 ->limit(50)
                                 ->get()
                                 ->mapWithKeys(fn ($p) => [
-                                    $p->id => "{$p->product->name} | {$p->presentation_type} {$p->format}",
+                                    $p->id => ($p->product->sku ? "[{$p->product->sku}] " : '')."{$p->product->name} | {$p->presentation_type} {$p->format}",
                                 ])
                                 ->toArray())
                             ->getOptionLabelUsing(fn ($value): ?string => ($p = ProductPresentation::with('product')->find($value))
-                                ? "{$p->product->name} | {$p->presentation_type} {$p->format}"
+                                ? ($p->product->sku ? "[{$p->product->sku}] " : '')."{$p->product->name} | {$p->presentation_type} {$p->format}"
                                 : null)
                             ->afterStateUpdated(function ($state, $set) {
                                 $pres = ProductPresentation::with('prices')->find($state);

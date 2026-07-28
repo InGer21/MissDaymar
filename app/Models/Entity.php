@@ -14,6 +14,10 @@ class Entity extends Model
     /** @use HasFactory<EntityFactory> */
     use HasFactory, SoftDeletes;
 
+    public const TYPE_CUSTOMER = 'customer';
+
+    public const TYPE_SUPPLIER = 'supplier';
+
     protected $fillable = [
         'user_id',
         'type',

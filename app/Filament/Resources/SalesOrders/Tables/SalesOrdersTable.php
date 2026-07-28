@@ -18,7 +18,12 @@ use Illuminate\Database\Eloquent\Builder;
 
 class SalesOrdersTable
 {
-    public static function configure(Table $table): Table
+    /**
+     * Compartida por Pedidos Generados, Despachados y Despachados por Cobrar.
+     * `$showDispatch` y `$showPayment` activan las columnas que solo tienen
+     * sentido una vez que el pedido salió del almacén.
+     */
+    public static function configure(Table $table, bool $showDispatch = false, bool $showPayment = false): Table
     {
         return $table
             ->defaultSort('created_at', 'desc')
@@ -57,9 +62,22 @@ class SalesOrdersTable
                     ->label('Total ($)')
                     ->numeric()
                     ->sortable(),
+                TextColumn::make('dispatched_at')
+                    ->label('Despachado')
+                    ->dateTime('d/m/Y H:i')
+                    ->placeholder('—')
+                    ->visible($showDispatch)
+                    ->sortable(),
+                TextColumn::make('invoice.paid_at')
+                    ->label('Cobro')
+                    ->badge()
+                    ->placeholder('Por cobrar')
+                    ->color(fn ($state) => $state ? 'success' : 'warning')
+                    ->formatStateUsing(fn ($state) => $state ? 'Cobrada '.$state->format('d/m/Y') : 'Por cobrar')
+                    ->visible($showPayment),
                 TextColumn::make('created_at')
                     ->label('Creada')
-                    ->dateTime()
+                    ->dateTime('d/m/Y')
                     ->sortable(),
             ])
             ->filters([

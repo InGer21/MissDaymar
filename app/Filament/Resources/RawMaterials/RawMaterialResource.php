@@ -20,6 +20,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use UnitEnum;
 
+/**
+ * Materia prima de tipo GRANO (lo que llega en sacos y se reenvasa).
+ * Comparte modelo y formularios con ConsumableResource; se distinguen
+ * por la columna `type`.
+ */
 class RawMaterialResource extends Resource
 {
     use HasRoleAccess;
@@ -37,17 +42,25 @@ class RawMaterialResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Inventario';
 
-    protected static ?string $modelLabel = 'Materia Prima';
+    protected static ?string $navigationLabel = 'Granos';
 
-    protected static ?string $pluralModelLabel = 'Materias Primas';
+    protected static ?string $modelLabel = 'Grano';
+
+    protected static ?string $pluralModelLabel = 'Granos';
 
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?int $navigationSort = 1;
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('type', RawMaterial::TYPE_GRAIN);
+    }
+
     public static function form(Schema $schema): Schema
     {
-        return RawMaterialForm::configure($schema);
+        return RawMaterialForm::configure($schema, RawMaterial::TYPE_GRAIN);
     }
 
     public static function infolist(Schema $schema): Schema
@@ -57,7 +70,7 @@ class RawMaterialResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return RawMaterialsTable::configure($table);
+        return RawMaterialsTable::configure($table, RawMaterial::TYPE_GRAIN);
     }
 
     public static function getRelations(): array
@@ -78,6 +91,7 @@ class RawMaterialResource extends Resource
     public static function getRecordRouteBindingEloquentQuery(): Builder
     {
         return parent::getRecordRouteBindingEloquentQuery()
+            ->where('type', RawMaterial::TYPE_GRAIN)
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);

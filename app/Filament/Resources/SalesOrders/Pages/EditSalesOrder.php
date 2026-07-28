@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SalesOrders\Pages;
 
+use App\Filament\Resources\DispatchedOrders\DispatchedOrderResource;
 use App\Filament\Resources\Invoices\InvoiceResource;
 use App\Filament\Resources\SalesOrders\SalesOrderResource;
 use App\Models\SalesOrder;
@@ -77,6 +78,29 @@ class EditSalesOrder extends EditRecord
                 ->icon('heroicon-o-x-circle')
                 ->requiresConfirmation()
                 ->action(fn () => $this->updateStatus('cancelled'));
+        }
+
+        // Despacho: ocurre DESPUÉS de facturar (confirmado con Juan) — se
+        // factura primero y luego sale el camión.
+        if ($record->status === 'invoiced' && ! $record->isDispatched()) {
+            $actions[] = Action::make('mark_dispatched')
+                ->label('Marcar como Despachado')
+                ->color('success')
+                ->icon('heroicon-o-truck')
+                ->requiresConfirmation()
+                ->modalHeading('Marcar pedido como despachado')
+                ->modalDescription('Confirma que la mercancía ya salió del almacén.')
+                ->action(function () use ($record) {
+                    $record->update(['dispatched_at' => now()]);
+
+                    Notification::make()
+                        ->title('Pedido marcado como despachado')
+                        ->success()
+                        ->send();
+
+                    // El pedido cambió de sección: se lleva al usuario allá.
+                    $this->redirect(DispatchedOrderResource::getUrl('edit', ['record' => $record]));
+                });
         }
 
         if ($record->status === 'cancelled') {

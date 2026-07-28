@@ -40,13 +40,22 @@ class SalesOrderResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Ventas';
 
-    protected static ?string $modelLabel = 'Orden de Venta';
+    protected static ?string $navigationLabel = 'Pedidos Generados';
 
-    protected static ?string $pluralModelLabel = 'Órdenes de Venta';
+    protected static ?string $modelLabel = 'Pedido';
+
+    protected static ?string $pluralModelLabel = 'Pedidos Generados';
 
     protected static ?string $recordTitleAttribute = 'id';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
+
+    /** Generados = todo lo que aún no ha salido del almacén. */
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->whereNull('dispatched_at');
+    }
 
     public static function form(Schema $schema): Schema
     {

@@ -19,12 +19,26 @@ class SalesOrder extends Model
         'entity_id',
         'user_id',
         'status',
+        'dispatched_at',
         'notes',
     ];
 
     protected $attributes = [
         'status' => 'pending',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'dispatched_at' => 'datetime',
+        ];
+    }
+
+    /** Un pedido está despachado cuando salió del almacén. */
+    public function isDispatched(): bool
+    {
+        return $this->dispatched_at !== null;
+    }
 
     public function entity(): BelongsTo
     {

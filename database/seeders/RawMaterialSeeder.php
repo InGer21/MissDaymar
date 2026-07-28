@@ -60,6 +60,9 @@ class RawMaterialSeeder extends Seeder
 
             RawMaterial::create([
                 'code' => $code,
+                // El xlsx no distingue grano de consumible; hoy todo lo que trae
+                // es grano. Los consumibles se cargan a mano desde el panel.
+                'type' => RawMaterial::TYPE_GRAIN,
                 'name' => $productName,
                 'product_id' => $products[$resolvedName] ?? null,
                 'purchase_presentation' => trim($row[2] ?? ''),

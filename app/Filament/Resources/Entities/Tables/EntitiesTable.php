@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Entities\Tables;
 
+use App\Models\Entity;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -10,43 +11,42 @@ use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
 class EntitiesTable
 {
-    public static function configure(Table $table): Table
+    /**
+     * Compartida entre Clientes y Proveedores. La columna y el filtro de
+     * "Tipo" desaparecen: ya está implícito en la sección donde se está.
+     */
+    public static function configure(Table $table, string $type = Entity::TYPE_CUSTOMER): Table
     {
+        $isCustomer = $type === Entity::TYPE_CUSTOMER;
+
         return $table
             ->columns([
-                TextColumn::make('type')
-                    ->label('Tipo')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'customer' => 'success',
-                        'supplier' => 'info',
-                    })
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'customer' => 'Cliente',
-                        'supplier' => 'Proveedor',
-                    }),
                 TextColumn::make('name')
                     ->label('Nombre')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('rif')
                     ->label('RIF')
                     ->searchable(),
                 TextColumn::make('sunagro')
                     ->label('SUNAGRO')
+                    ->placeholder('—')
                     ->searchable(),
                 TextColumn::make('fiscal_state')
-                    ->label('Estado'),
+                    ->label('Estado')
+                    ->placeholder('—'),
                 TextColumn::make('fiscal_city')
-                    ->label('Ciudad'),
+                    ->label('Ciudad')
+                    ->placeholder('—'),
                 TextColumn::make('vendor.name')
                     ->label('Vendedor')
-                    ->visible(fn () => auth()->user()?->role === 'admin'),
+                    ->placeholder('—')
+                    ->visible(fn () => $isCustomer && auth()->user()?->role === 'admin'),
                 TextColumn::make('phone')
                     ->label('Teléfono')
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -57,12 +57,8 @@ class EntitiesTable
                     ->label('¿Activo?')
                     ->boolean(),
             ])
+            ->defaultSort('name')
             ->filters([
-                SelectFilter::make('type')
-                    ->options([
-                        'customer' => 'Cliente',
-                        'supplier' => 'Proveedor',
-                    ]),
                 TrashedFilter::make(),
             ])
             ->recordActions([

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ProductPresentations\Schemas;
 
+use App\Models\ProductPresentation;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -9,8 +10,19 @@ use Filament\Schemas\Schema;
 
 class ProductPresentationForm
 {
-    public static function configure(Schema $schema): Schema
+    /**
+     * Compartido por Sacos, Bultos y Mercancía Suelta. `$types` limita las
+     * opciones de "Tipo de Presentación" a las del grupo, para que un registro
+     * no pueda crearse fuera de la sección donde se está.
+     *
+     * @param  list<string>|null  $types
+     */
+    public static function configure(Schema $schema, ?array $types = null): Schema
     {
+        $options = $types === null
+            ? ProductPresentation::TYPE_LABELS
+            : array_intersect_key(ProductPresentation::TYPE_LABELS, array_flip($types));
+
         return $schema
             ->columns(2)
             ->components([
@@ -18,19 +30,13 @@ class ProductPresentationForm
                     ->label('Producto')
                     ->relationship('product', 'name')
                     ->searchable()
+                    ->preload()
                     ->required(),
                 Select::make('presentation_type')
                     ->label('Tipo de Presentación')
                     ->required()
-                    ->options([
-                        'bolsa_individual' => 'Bolsa Individual',
-                        'por_kilo' => 'Por Kilo',
-                        'ristra' => 'Ristra',
-                        'bulto' => 'Bulto',
-                        'medio_bulto' => 'Medio Bulto',
-                        'saco' => 'Saco',
-                        'bolsa_4kg' => 'Bolsa 4kg',
-                    ]),
+                    ->options($options)
+                    ->default(count($options) === 1 ? array_key_first($options) : null),
                 TextInput::make('format')
                     ->label('Formato')
                     ->required()
@@ -48,13 +54,14 @@ class ProductPresentationForm
                     ]),
                 TextInput::make('current_stock')
                     ->label('Stock Actual')
-                    ->required()
                     ->numeric()
                     ->default(0)
                     ->disabled()
-                    ->helperText('Actualizado automáticamente por movimientos de inventario'),
+                    ->dehydrated(false)
+                    ->helperText('Se actualiza automáticamente con los movimientos de inventario'),
                 Toggle::make('is_active')
-                    ->label('¿Activo?'),
+                    ->label('¿Activo?')
+                    ->default(true),
             ]);
     }
 }

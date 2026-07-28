@@ -68,7 +68,11 @@ class CatalogImportCommand extends Command
 
         DB::table('categories')->where('slug', 'general')->delete();
 
-        DB::table('raw_materials')->delete();
+        // OJO: aquí había un `DB::table('raw_materials')->delete()` sin condición.
+        // Como este comando corre en cada arranque de contenedor (scripts/start.sh),
+        // borraba TODAS las materias primas en cada deploy/reinicio, incluidas las
+        // cargadas a mano desde el panel. Se eliminó: `raw_materials` no se importa
+        // desde catalogo.csv, así que este comando no tiene por qué tocarla.
 
         $this->info('  -> Garbage cleaned');
     }

@@ -20,6 +20,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use UnitEnum;
 
+/**
+ * Producto Terminado — SACOS. Comparte modelo y formularios con
+ * BundleResource y LooseGoodResource; se distinguen por `presentation_type`.
+ */
 class ProductPresentationResource extends Resource
 {
     use HasRoleAccess;
@@ -33,21 +37,29 @@ class ProductPresentationResource extends Resource
         ];
     }
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedQueueList;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArchiveBoxArrowDown;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Catálogo';
+    protected static string|UnitEnum|null $navigationGroup = 'Inventario';
 
-    protected static ?string $modelLabel = 'Presentación';
+    protected static ?string $navigationLabel = 'Sacos';
 
-    protected static ?string $pluralModelLabel = 'Presentaciones';
+    protected static ?string $modelLabel = 'Saco';
+
+    protected static ?string $pluralModelLabel = 'Sacos';
 
     protected static ?string $recordTitleAttribute = 'format';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 4;
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->whereIn('presentation_type', ProductPresentation::TYPES_SACK);
+    }
 
     public static function form(Schema $schema): Schema
     {
-        return ProductPresentationForm::configure($schema);
+        return ProductPresentationForm::configure($schema, ProductPresentation::TYPES_SACK);
     }
 
     public static function infolist(Schema $schema): Schema
@@ -57,7 +69,7 @@ class ProductPresentationResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return ProductPresentationsTable::configure($table);
+        return ProductPresentationsTable::configure($table, ProductPresentation::TYPES_SACK);
     }
 
     public static function getRelations(): array
@@ -78,6 +90,7 @@ class ProductPresentationResource extends Resource
     public static function getRecordRouteBindingEloquentQuery(): Builder
     {
         return parent::getRecordRouteBindingEloquentQuery()
+            ->whereIn('presentation_type', ProductPresentation::TYPES_SACK)
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);

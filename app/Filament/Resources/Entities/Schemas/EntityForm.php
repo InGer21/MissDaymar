@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Entities\Schemas;
 
+use App\Models\Entity;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -10,18 +12,19 @@ use Filament\Schemas\Schema;
 
 class EntityForm
 {
-    public static function configure(Schema $schema): Schema
+    /**
+     * Compartido entre Clientes y Proveedores. El `type` no se pide al
+     * usuario: lo fija el Resource desde el que se crea el registro.
+     */
+    public static function configure(Schema $schema, string $type = Entity::TYPE_CUSTOMER): Schema
     {
+        $isCustomer = $type === Entity::TYPE_CUSTOMER;
+
         return $schema
             ->columns(2)
             ->components([
-                Select::make('type')
-                    ->label('Tipo')
-                    ->required()
-                    ->options([
-                        'customer' => 'Cliente',
-                        'supplier' => 'Proveedor',
-                    ]),
+                Hidden::make('type')
+                    ->default($type),
                 TextInput::make('name')
                     ->label('Nombre o Razón Social')
                     ->required()
@@ -54,13 +57,15 @@ class EntityForm
                     ->email()
                     ->maxLength(255),
                 Toggle::make('is_active')
-                    ->label('¿Activo?'),
+                    ->label('¿Activo?')
+                    ->default(true),
+                // El vendedor asignado solo aplica a clientes.
                 Select::make('user_id')
                     ->label('Vendedor')
                     ->relationship('vendor', 'name', fn ($q) => $q->where('role', 'vendedor')->where('is_active', true))
                     ->searchable()
                     ->preload()
-                    ->visible(fn () => auth()->user()?->role === 'admin'),
+                    ->visible(fn () => $isCustomer && auth()->user()?->role === 'admin'),
             ]);
     }
 }

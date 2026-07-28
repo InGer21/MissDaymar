@@ -9,6 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
+            $table->dropIndex(['profit_code']);
             $table->dropColumn(['profit_code', 'profit_line', 'profit_subl']);
         });
 
@@ -17,14 +18,17 @@ return new class extends Migration
         });
 
         Schema::table('entities', function (Blueprint $table) {
+            $table->dropIndex(['profit_code']);
             $table->dropColumn(['profit_code', 'profit_vendor', 'profit_zone']);
         });
 
         Schema::table('users', function (Blueprint $table) {
+            $table->dropIndex(['profit_code']);
             $table->dropColumn(['profit_code', 'is_salesperson']);
         });
 
         Schema::table('sales_orders', function (Blueprint $table) {
+            $table->dropIndex(['profit_doc_num']);
             $table->dropColumn('profit_doc_num');
         });
     }

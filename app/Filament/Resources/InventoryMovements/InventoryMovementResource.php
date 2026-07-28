@@ -41,7 +41,7 @@ class InventoryMovementResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'id';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 9;
 
     public static function form(Schema $schema): Schema
     {

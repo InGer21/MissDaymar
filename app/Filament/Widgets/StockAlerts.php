@@ -11,6 +11,10 @@ class StockAlerts extends TableWidget
 {
     protected static ?int $sort = 2;
 
+    // Sin carga diferida: la consulta tarda ~15ms, no vale la pena el
+    // recuadro de carga.
+    protected static bool $isLazy = false;
+
     protected int|string|array $columnSpan = 'full';
 
     public function table(Table $table): Table

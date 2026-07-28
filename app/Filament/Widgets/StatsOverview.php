@@ -13,6 +13,11 @@ class StatsOverview extends BaseWidget
 {
     protected static ?int $sort = 1;
 
+    // Sin carga diferida: las consultas tardan ~40ms sobre este volumen de
+    // datos, así que el widget se pinta junto con la página en vez de
+    // mostrar un recuadro vacío que se llena después.
+    protected static bool $isLazy = false;
+
     protected function getStats(): array
     {
         $stockCount = ProductPresentation::whereNotIn('presentation_type', ['saco'])

@@ -14,8 +14,13 @@ class RawMaterial extends Model
     /** @use HasFactory<RawMaterialFactory> */
     use HasFactory, SoftDeletes;
 
+    public const TYPE_GRAIN = 'grano';
+
+    public const TYPE_CONSUMABLE = 'consumible';
+
     protected $fillable = [
         'code',
+        'type',
         'name',
         'product_id',
         'purchase_presentation',

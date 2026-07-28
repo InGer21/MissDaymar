@@ -21,13 +21,21 @@ class Invoice extends Model
         'igtf_usd',
         'total_usd',
         'issued_at',
+        'paid_at',
     ];
 
     protected function casts(): array
     {
         return [
             'issued_at' => 'datetime',
+            'paid_at' => 'datetime',
         ];
+    }
+
+    /** Una factura está cobrada cuando tiene fecha de cobro. */
+    public function isPaid(): bool
+    {
+        return $this->paid_at !== null;
     }
 
     public function salesOrder(): BelongsTo

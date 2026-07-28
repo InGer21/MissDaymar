@@ -39,17 +39,25 @@ class EntityResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Ventas';
 
-    protected static ?string $modelLabel = 'Entidad';
+    protected static ?string $navigationLabel = 'Clientes';
 
-    protected static ?string $pluralModelLabel = 'Entidades';
+    protected static ?string $modelLabel = 'Cliente';
+
+    protected static ?string $pluralModelLabel = 'Clientes';
 
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?int $navigationSort = 1;
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('type', Entity::TYPE_CUSTOMER);
+    }
+
     public static function form(Schema $schema): Schema
     {
-        return EntityForm::configure($schema);
+        return EntityForm::configure($schema, Entity::TYPE_CUSTOMER);
     }
 
     public static function infolist(Schema $schema): Schema
@@ -59,7 +67,7 @@ class EntityResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return EntitiesTable::configure($table);
+        return EntitiesTable::configure($table, Entity::TYPE_CUSTOMER);
     }
 
     public static function getRelations(): array
@@ -80,6 +88,7 @@ class EntityResource extends Resource
     public static function getRecordRouteBindingEloquentQuery(): Builder
     {
         return parent::getRecordRouteBindingEloquentQuery()
+            ->where('type', Entity::TYPE_CUSTOMER)
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);

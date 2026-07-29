@@ -10,6 +10,7 @@ use App\Filament\Resources\Concerns\HasRoleAccess;
 use App\Filament\Resources\ProductPresentations\Schemas\ProductPresentationForm;
 use App\Filament\Resources\ProductPresentations\Schemas\ProductPresentationInfolist;
 use App\Filament\Resources\ProductPresentations\Tables\ProductPresentationsTable;
+use App\Models\Product;
 use App\Models\ProductPresentation;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -41,20 +42,21 @@ class BundleResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Inventario';
 
-    protected static ?string $navigationLabel = 'Bultos';
+    protected static ?string $navigationLabel = 'Mercancía Terminada';
 
     protected static ?string $modelLabel = 'Bulto';
 
-    protected static ?string $pluralModelLabel = 'Bultos';
+    protected static ?string $pluralModelLabel = 'Mercancía Terminada';
 
     protected static ?string $recordTitleAttribute = 'format';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 3;
 
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->whereIn('presentation_type', ProductPresentation::TYPES_BUNDLE);
+            ->whereIn('presentation_type', ProductPresentation::TYPES_BUNDLE)
+            ->whereHas('product.category', fn (Builder $q) => $q->whereNotIn('slug', Product::HIDDEN_CATEGORY_SLUGS));
     }
 
     public static function form(Schema $schema): Schema

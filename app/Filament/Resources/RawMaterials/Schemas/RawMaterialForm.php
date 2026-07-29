@@ -12,8 +12,8 @@ use Filament\Schemas\Schema;
 class RawMaterialForm
 {
     /**
-     * Compartido entre Granos y Consumibles. El `type` no se pide al usuario:
-     * lo fija el Resource desde el que se crea el registro.
+     * Compartido entre Sacos y Materiales Consumibles. El `type` no se pide al
+     * usuario: lo fija el Resource desde el que se crea el registro.
      */
     public static function configure(Schema $schema, string $type = RawMaterial::TYPE_GRAIN): Schema
     {
@@ -24,30 +24,44 @@ class RawMaterialForm
             ->components([
                 Hidden::make('type')
                     ->default($type),
+                TextInput::make('sku')
+                    ->label('SKU')
+                    ->maxLength(10)
+                    ->unique(ignoreRecord: true)
+                    ->placeholder($isGrain ? 'ej: G00311' : 'ej: C00110'),
                 TextInput::make('code')
-                    ->label('Código')
+                    ->label('Código interno')
                     ->required()
                     ->maxLength(20)
-                    ->unique(ignoreRecord: true),
+                    ->unique(ignoreRecord: true)
+                    ->helperText('Código heredado del sistema anterior'),
                 TextInput::make('name')
-                    ->label('Nombre')
+                    ->label($isGrain ? 'Nombre del grano' : 'Nombre del paquete')
                     ->required()
                     ->maxLength(255),
-                Select::make('product_id')
-                    ->label('Producto Asociado')
-                    ->relationship('product', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->nullable()
-                    ->visible($isGrain),
                 TextInput::make('purchase_presentation')
-                    ->label('Presentación de Compra')
+                    ->label($isGrain ? 'Presentación de compra' : 'Capacidad del paquete')
                     ->required()
                     ->maxLength(100)
-                    ->placeholder($isGrain ? 'ej: 25 kg, Saco 50kg' : 'ej: Bobina 50 cm, Caja x 100'),
+                    ->placeholder($isGrain ? 'ej: Saco 25 kg' : 'ej: 500 gr por paquete'),
+                TextInput::make('current_stock')
+                    ->label($isGrain ? 'Sacos en existencia' : 'Bobinas en existencia')
+                    ->numeric()
+                    ->minValue(0)
+                    ->default(0)
+                    ->required(),
+                TextInput::make('kg_per_unit')
+                    ->label('KG de grano por saco')
+                    ->numeric()
+                    ->minValue(0)
+                    ->step(0.001)
+                    ->suffix('kg')
+                    ->visible($isGrain)
+                    ->helperText('Necesario para calcular los KG totales en existencia'),
                 Select::make('unit')
                     ->label('Unidad')
                     ->required()
+                    ->default($isGrain ? 'sack' : 'unit')
                     ->options([
                         'g' => 'Gramos',
                         'kg' => 'Kilogramos',
@@ -62,13 +76,6 @@ class RawMaterialForm
                 Textarea::make('notes')
                     ->label('Notas')
                     ->columnSpanFull(),
-                TextInput::make('stock')
-                    ->label('Stock Actual')
-                    ->numeric()
-                    ->disabled()
-                    ->dehydrated(false)
-                    ->visible($isGrain)
-                    ->helperText('Stock del producto asociado. Se actualiza con conversiones.'),
             ]);
     }
 }

@@ -14,6 +14,13 @@ class Product extends Model
     /** @use HasFactory<ProductFactory> */
     use HasFactory, SoftDeletes;
 
+    /**
+     * Categorías que no se muestran en el panel. El negocio de especias se
+     * lleva aparte y sin sistema, así que se oculta — los datos NO se borran,
+     * para poder volver a mostrarlos quitando el slug de aquí.
+     */
+    public const HIDDEN_CATEGORY_SLUGS = ['especias'];
+
     protected $fillable = [
         'sku',
         'name',

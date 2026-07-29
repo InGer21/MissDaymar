@@ -40,6 +40,7 @@ class ProductPresentation extends Model
     ];
 
     protected $fillable = [
+        'sku',
         'product_id',
         'presentation_type',
         'format',

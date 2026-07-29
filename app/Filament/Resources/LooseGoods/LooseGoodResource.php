@@ -10,6 +10,7 @@ use App\Filament\Resources\LooseGoods\Pages\ViewLooseGood;
 use App\Filament\Resources\ProductPresentations\Schemas\ProductPresentationForm;
 use App\Filament\Resources\ProductPresentations\Schemas\ProductPresentationInfolist;
 use App\Filament\Resources\ProductPresentations\Tables\ProductPresentationsTable;
+use App\Models\Product;
 use App\Models\ProductPresentation;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -50,12 +51,13 @@ class LooseGoodResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'format';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 4;
 
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->whereIn('presentation_type', ProductPresentation::TYPES_LOOSE);
+            ->whereIn('presentation_type', ProductPresentation::TYPES_LOOSE)
+            ->whereHas('product.category', fn (Builder $q) => $q->whereNotIn('slug', Product::HIDDEN_CATEGORY_SLUGS));
     }
 
     public static function form(Schema $schema): Schema

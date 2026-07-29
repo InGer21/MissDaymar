@@ -18,7 +18,7 @@ use Filament\Tables\Table;
 class ProductPresentationsTable
 {
     /**
-     * Compartida por Sacos, Bultos y Mercancía Suelta.
+     * Compartida por Mercancía Terminada (bultos) y Mercancía Suelta.
      *
      * @param  list<string>|null  $types
      */
@@ -28,8 +28,15 @@ class ProductPresentationsTable
             ? ProductPresentation::TYPE_LABELS
             : array_intersect_key(ProductPresentation::TYPE_LABELS, array_flip($types));
 
+        $isBundle = $types === ProductPresentation::TYPES_BUNDLE;
+
         return $table
             ->columns([
+                TextColumn::make('sku')
+                    ->label('SKU')
+                    ->placeholder('—')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('product.name')
                     ->label('Producto')
                     ->searchable()
@@ -40,19 +47,18 @@ class ProductPresentationsTable
                     ->formatStateUsing(fn (string $state): string => ProductPresentation::TYPE_LABELS[$state] ?? $state)
                     // Con un solo tipo en la sección la columna no aporta nada.
                     ->visible(count($typeOptions) > 1),
-                TextColumn::make('format')
-                    ->label('Formato')
-                    ->searchable(),
-                TextColumn::make('unit')
-                    ->label('Unidad'),
                 TextColumn::make('current_stock')
-                    ->label('Existencia')
-                    ->numeric()
+                    ->label($isBundle ? 'Bultos (unidades)' : 'Unidades')
+                    ->numeric(decimalPlaces: 0)
                     ->sortable()
-                    ->color(fn ($state) => $state > 0 ? 'success' : ($state < 0 ? 'danger' : 'gray')),
+                    ->color(fn ($state) => $state > 0 ? 'success' : 'gray'),
+                TextColumn::make('format')
+                    ->label($isBundle ? 'Dimensiones del bulto' : 'Gramos por paquete')
+                    ->searchable(),
                 IconColumn::make('is_active')
                     ->label('¿Activo?')
-                    ->boolean(),
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('product.name')
             ->filters([

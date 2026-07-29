@@ -221,6 +221,10 @@ class CatalogImportCommand extends Command
             $existing[$key] = true;
 
             $batch[] = [
+                // SKU completo de 6 caracteres (ej. G00311). `products.sku`
+                // guarda solo el prefijo de 4, que identifica el producto pero
+                // no la presentación concreta.
+                'sku' => $sku,
                 'product_id' => $productId,
                 'presentation_type' => $mappedType,
                 'format' => $format,

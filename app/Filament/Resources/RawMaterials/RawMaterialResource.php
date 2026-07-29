@@ -21,9 +21,10 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use UnitEnum;
 
 /**
- * Materia prima de tipo GRANO (lo que llega en sacos y se reenvasa).
- * Comparte modelo y formularios con ConsumableResource; se distinguen
- * por la columna `type`.
+ * Materia prima — SACOS. Así llega la mercancía importada y así la cuenta el
+ * jefe de producción: cuántos sacos hay de cada grano y cuántos KG suman.
+ * Comparte modelo y formularios con ConsumableResource; se distinguen por la
+ * columna `type`.
  */
 class RawMaterialResource extends Resource
 {
@@ -42,11 +43,11 @@ class RawMaterialResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Inventario';
 
-    protected static ?string $navigationLabel = 'Granos';
+    protected static ?string $navigationLabel = 'Sacos';
 
-    protected static ?string $modelLabel = 'Grano';
+    protected static ?string $modelLabel = 'Saco';
 
-    protected static ?string $pluralModelLabel = 'Granos';
+    protected static ?string $pluralModelLabel = 'Sacos';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -65,7 +66,7 @@ class RawMaterialResource extends Resource
 
     public static function infolist(Schema $schema): Schema
     {
-        return RawMaterialInfolist::configure($schema);
+        return RawMaterialInfolist::configure($schema, RawMaterial::TYPE_GRAIN);
     }
 
     public static function table(Table $table): Table

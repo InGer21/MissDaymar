@@ -26,6 +26,11 @@ class ProductPresentationForm
         return $schema
             ->columns(2)
             ->components([
+                TextInput::make('sku')
+                    ->label('SKU')
+                    ->maxLength(10)
+                    ->unique(ignoreRecord: true)
+                    ->placeholder('ej: G00321'),
                 Select::make('product_id')
                     ->label('Producto')
                     ->relationship('product', 'name')

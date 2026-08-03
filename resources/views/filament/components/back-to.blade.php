@@ -4,5 +4,5 @@
     tag="a"
     :href="$url"
 >
-    Volver al listado
+    {{ $label }}
 </x-filament::button>

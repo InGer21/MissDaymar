@@ -32,11 +32,11 @@ class AdminPanelProvider extends PanelProvider
     {
         FilamentView::registerRenderHook(
             PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE,
-            fn (array $scopes): string => $this->renderBackToListButton($scopes),
+            fn (array $scopes): string => $this->renderBackToButton($scopes),
         );
     }
 
-    private function renderBackToListButton(array $scopes): string
+    private function renderBackToButton(array $scopes): string
     {
         $pageClass = $scopes[0] ?? null;
 
@@ -44,12 +44,17 @@ class AdminPanelProvider extends PanelProvider
             return '';
         }
 
-        if (is_subclass_of($pageClass, ListRecords::class)) {
-            return '';
-        }
+        $url = is_subclass_of($pageClass, ListRecords::class)
+            ? Dashboard::getUrl()
+            : $pageClass::getResource()::getUrl('index');
 
-        return view('filament.components.back-to-list', [
-            'url' => $pageClass::getResource()::getUrl('index'),
+        $label = is_subclass_of($pageClass, ListRecords::class)
+            ? __('Volver al Dashboard')
+            : __('Volver al listado');
+
+        return view('filament.components.back-to', [
+            'url' => $url,
+            'label' => $label,
         ])->render();
     }
 

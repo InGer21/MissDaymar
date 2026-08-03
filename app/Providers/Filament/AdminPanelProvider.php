@@ -11,9 +11,13 @@ use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\Pages\Page;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
+use Filament\Support\Facades\FilamentView;
 use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -24,6 +28,31 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
 {
+    public function boot(): void
+    {
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE,
+            fn (array $scopes): string => $this->renderBackToListButton($scopes),
+        );
+    }
+
+    private function renderBackToListButton(array $scopes): string
+    {
+        $pageClass = $scopes[0] ?? null;
+
+        if (! is_string($pageClass) || ! is_subclass_of($pageClass, Page::class)) {
+            return '';
+        }
+
+        if (is_subclass_of($pageClass, ListRecords::class)) {
+            return '';
+        }
+
+        return view('filament.components.back-to-list', [
+            'url' => $pageClass::getResource()::getUrl('index'),
+        ])->render();
+    }
+
     public function panel(Panel $panel): Panel
     {
         return $panel
